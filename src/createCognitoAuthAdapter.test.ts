@@ -234,7 +234,7 @@ function readCognitoCommandName(request: unknown): string {
   if (typeof request !== 'object' || request === null || !('headers' in request)) {
     return '';
   }
-  const headers = request.headers;
+  const { headers } = request;
   if (typeof headers !== 'object' || headers === null || !('x-amz-target' in headers)) {
     return '';
   }
