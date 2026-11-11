@@ -31,18 +31,14 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: bun install
-
-      - name: Emit bootstrap lockfile for repository commit
-        run: |
-          node -e "const fs=require('node:fs'); console.log('LOCK_BEGIN'); console.log(fs.readFileSync('bun.lock').toString('base64')); console.log('LOCK_END');"
+        run: bun install --frozen-lockfile
 
       - name: Reject package version rollback
-        if: github.event_name == 'pull_request' && hashFiles('package.json') != ''
+        if: github.event_name == 'pull_request'
         run: |
           base_sha='${{ github.event.pull_request.base.sha }}'
           if ! git cat-file -e "${base_sha}:package.json" 2>/dev/null; then
-            echo 'New standalone package baseline; base has no package.json.'
+            echo 'Initial package bootstrap; main has no package.json.'
             exit 0
           fi
           base_version="$(git show "${base_sha}:package.json" | node -e "let source=''; process.stdin.on('data',(chunk)=>source+=chunk); process.stdin.on('end',()=>process.stdout.write(JSON.parse(source).version ?? ''))")"
