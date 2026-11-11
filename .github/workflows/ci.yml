@@ -80,16 +80,6 @@ jobs:
             BUN_INSTALL_CACHE_DIR="${RUNNER_TEMP}/doctor-cache" bunx @ankhorage/doctor@0.14.29 validate .
           fi
 
-      - name: Temporary bootstrap formatting evidence
-        run: |
-          bun run lint:fix || true
-          bun run format
-          git diff --name-only | while IFS= read -r file; do
-            echo "CFILE_BEGIN:$file"
-            node -e 'const fs=require("node:fs"); console.log(fs.readFileSync(process.argv[1]).toString("base64"))' "$file"
-            echo "CFILE_END:$file"
-          done
-
       - name: Run lint
         run: |
           if node -e "const p=require('./package.json'); process.exit(p.scripts?.lint ? 0 : 1)"; then

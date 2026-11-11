@@ -110,15 +110,17 @@ test('rejects unregistered callback URLs and unconfigured federation providers',
 function createSuccessfulTokenResponse(calls: string[]): typeof fetch {
   return (_url, init) => {
     calls.push(init?.body instanceof URLSearchParams ? init.body.toString() : '');
-    return Promise.resolve(new Response(
-      JSON.stringify({
-        access_token: 'access-test',
-        id_token: 'id-test',
-        refresh_token: 'refresh-test',
-        expires_in: 3600,
-      }),
-      { status: 200 },
-    ));
+    return Promise.resolve(
+      new Response(
+        JSON.stringify({
+          access_token: 'access-test',
+          id_token: 'id-test',
+          refresh_token: 'refresh-test',
+          expires_in: 3600,
+        }),
+        { status: 200 },
+      ),
+    );
   };
 }
 
