@@ -106,6 +106,22 @@ test('rejects unregistered callback URLs and unconfigured federation providers',
   ).toMatchObject({ ok: false, error: { code: 'provider_disabled' } });
 });
 
+/*** Simulate the Cognito token exchange without bypassing the real PKCE request body. */
+function createSuccessfulTokenResponse(calls: string[]): typeof fetch {
+  return (_url, init) => {
+    calls.push(init?.body instanceof URLSearchParams ? init.body.toString() : '');
+    return Promise.resolve(new Response(
+      JSON.stringify({
+        access_token: 'access-test',
+        id_token: 'id-test',
+        refresh_token: 'refresh-test',
+        expires_in: 3600,
+      }),
+      { status: 200 },
+    ));
+  };
+}
+
 test('completes Cognito PKCE once with verified access and nonce-bound ID JWTs', async () => {
   const nonceValue: { current: string | null } = { current: null };
   const httpCalls: string[] = [];
@@ -115,20 +131,7 @@ test('completes Cognito PKCE once with verified access and nonce-bound ID JWTs',
         sub: 'player-1',
         ...(use === 'id' && nonceValue.current ? { nonce: nonceValue.current } : {}),
       }),
-    http: (_url, init) => {
-      httpCalls.push(init?.body instanceof URLSearchParams ? init.body.toString() : '');
-      return Promise.resolve(
-        new Response(
-          JSON.stringify({
-            access_token: 'access-test',
-            id_token: 'id-test',
-            refresh_token: 'refresh-test',
-            expires_in: 3600,
-          }),
-          { status: 200 },
-        ),
-      );
-    },
+    http: createSuccessfulTokenResponse(httpCalls),
   });
   const { adapter, started, url } = await startAuthorization(config);
   nonceValue.current = url.searchParams.get('nonce');
@@ -166,7 +169,7 @@ test('rejects state mismatch before invoking the Cognito token endpoint', async 
   const calls: string[] = [];
   const config = createConfig({
     http: (url) => {
-      calls.push(typeof url === 'string' ? url : url.toString());
+      calls.push(typeof url === 'string' ? url : url instanceof URL ? url.href : url.url);
       return Promise.resolve(new Response('denied', { status: 400 }));
     },
   });
