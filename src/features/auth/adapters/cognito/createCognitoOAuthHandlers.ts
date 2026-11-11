@@ -7,7 +7,11 @@ import type {
   StartOAuthAuthorizationInput,
 } from '@ankhorage/contracts/auth';
 
-import type { CognitoAuthConfig, CognitoJwtVerifier } from '../../../../types/cognito.js';
+import type {
+  CognitoAuthConfig,
+  CognitoAuthorizationAttempt,
+  CognitoJwtVerifier,
+} from '../../../../types/cognito.js';
 
 const DEFAULT_AUTHORIZATION_TTL_MS = 10 * 60 * 1000;
 const RESERVED_PARAMETERS = new Set([
@@ -16,134 +20,167 @@ const RESERVED_PARAMETERS = new Set([
 ]);
 
 /*** Provide single-use PKCE OAuth operations through Cognito's HTTPS authorization server. */
-export function createCognitoOAuthHandlers(
+export function createCognitoOAuthHandlers(config: CognitoAuthConfig, verifyJwt: CognitoJwtVerifier) {
+  return {
+    start: (input: StartOAuthAuthorizationInput) => startAuthorizationAsync(config, input),
+    complete: (input: CompleteOAuthAuthorizationInput) =>
+      completeAuthorizationAsync(config, verifyJwt, input),
+  };
+}
+
+/*** Persist an authorization-code challenge before exposing the outbound redirect. */
+async function startAuthorizationAsync(
+  config: CognitoAuthConfig,
+  input: StartOAuthAuthorizationInput,
+): Promise<AuthOAuthStartResult> {
+  const domain = authorizationDomain(config.public.hostedDomain);
+  if (!domain) return startFailure('provider_misconfigured', input.provider);
+  if (!config.public.redirectUris.includes(input.redirectUri)) {
+    return startFailure('invalid_redirect_uri', input.provider);
+  }
+  const provider = resolveProvider(config, input.provider);
+  if (provider === null) return startFailure('provider_disabled', input.provider);
+  const attemptId = (config.createAttemptId ?? crypto.randomUUID)();
+  const state = randomToken();
+  const nonce = randomToken();
+  const verifier = randomToken();
+  try {
+    const url = await buildAuthorizationUrlAsync(config, input, domain, provider, state, nonce, verifier);
+    await config.authorizationAttempts.create({
+      attemptId,
+      redirectUri: input.redirectUri,
+      provider: input.provider,
+      state,
+      nonce,
+      codeVerifier: verifier,
+      expiresAt: now(config) + (config.authorizationAttemptTtlMs ?? DEFAULT_AUTHORIZATION_TTL_MS),
+    });
+    return {
+      ok: true,
+      data: {
+        attemptId,
+        provider: input.provider,
+        authorizationUrl: url.toString(),
+        redirectUri: input.redirectUri,
+      },
+    };
+  } catch {
+    return startFailure('authorization_failed', input.provider);
+  }
+}
+
+/*** Construct a registered Cognito authorize URL with S256 PKCE, state and nonce. */
+async function buildAuthorizationUrlAsync(
+  config: CognitoAuthConfig,
+  input: StartOAuthAuthorizationInput,
+  domain: URL,
+  provider: string,
+  state: string,
+  nonce: string,
+  verifier: string,
+): Promise<URL> {
+  const url = new URL('/oauth2/authorize', domain);
+  url.searchParams.set('client_id', config.public.clientId);
+  url.searchParams.set('response_type', 'code');
+  url.searchParams.set('redirect_uri', input.redirectUri);
+  url.searchParams.set('scope', [...new Set(['openid', ...(input.scopes ?? config.public.scopes ?? [])])].join(' '));
+  url.searchParams.set('state', state);
+  url.searchParams.set('nonce', nonce);
+  url.searchParams.set('code_challenge_method', 'S256');
+  url.searchParams.set('code_challenge', await pkceChallenge(verifier));
+  if (provider !== '') url.searchParams.set('identity_provider', provider);
+  for (const [key, value] of Object.entries(input.queryParams ?? {})) {
+    if (!RESERVED_PARAMETERS.has(key)) url.searchParams.set(key, value);
+  }
+  return url;
+}
+
+/*** Consume one callback attempt and reject expired, replayed, or mismatched authorization. */
+async function completeAuthorizationAsync(
   config: CognitoAuthConfig,
   verifyJwt: CognitoJwtVerifier,
-) {
-  return {
-    start: async (input: StartOAuthAuthorizationInput): Promise<AuthOAuthStartResult> => {
-      const domain = authorizationDomain(config.public.hostedDomain);
-      if (!domain) return startFailure('provider_misconfigured', input.provider);
-      if (!config.public.redirectUris.includes(input.redirectUri)) {
-        return startFailure('invalid_redirect_uri', input.provider);
-      }
-      const provider = resolveProvider(config, input.provider);
-      if (provider === null) return startFailure('provider_disabled', input.provider);
-      const attemptId = (config.createAttemptId ?? crypto.randomUUID)();
-      const state = randomToken();
-      const nonce = randomToken();
-      const verifier = randomToken();
-      try {
-        const codeChallenge = await pkceChallenge(verifier);
-        const url = new URL('/oauth2/authorize', domain);
-        url.searchParams.set('client_id', config.public.clientId);
-        url.searchParams.set('response_type', 'code');
-        url.searchParams.set('redirect_uri', input.redirectUri);
-        url.searchParams.set('scope', [...new Set(['openid', ...(input.scopes ?? config.public.scopes ?? [])])].join(' '));
-        url.searchParams.set('state', state);
-        url.searchParams.set('nonce', nonce);
-        url.searchParams.set('code_challenge_method', 'S256');
-        url.searchParams.set('code_challenge', codeChallenge);
-        if (provider !== '') url.searchParams.set('identity_provider', provider);
-        for (const [key, value] of Object.entries(input.queryParams ?? {})) {
-          if (!RESERVED_PARAMETERS.has(key)) url.searchParams.set(key, value);
-        }
-        await config.authorizationAttempts.create({
-          attemptId,
-          redirectUri: input.redirectUri,
-          provider: input.provider,
-          state,
-          nonce,
-          codeVerifier: verifier,
-          expiresAt: now(config) + (config.authorizationAttemptTtlMs ?? DEFAULT_AUTHORIZATION_TTL_MS),
-        });
-        return {
-          ok: true,
-          data: {
-            attemptId,
-            provider: input.provider,
-            authorizationUrl: url.toString(),
-            redirectUri: input.redirectUri,
-          },
-        };
-      } catch {
-        return startFailure('authorization_failed', input.provider);
-      }
-    },
-    complete: async (input: CompleteOAuthAuthorizationInput): Promise<AuthOAuthCompletionResult> => {
-      const currentTime = now(config);
-      const attempt = await config.authorizationAttempts.consume(input.attemptId, currentTime).catch(() => null);
-      if (!attempt || attempt.expiresAt <= currentTime) {
-        return completeFailure('authorization_attempt_not_found', 'callback');
-      }
-      if (input.response.type === 'cancelled') {
-        return {
-          ok: false,
-          status: 'cancelled',
-          provider: attempt.provider,
-          reason: input.response.reason,
-        };
-      }
-      if (input.response.type === 'error') {
-        return completeFailure('provider_error', 'transport', attempt.provider);
-      }
-      const callback = parseCallback(input.response.url, attempt.redirectUri);
-      if (!callback) return completeFailure('invalid_callback', 'callback', attempt.provider);
-      if (callback.state !== attempt.state) {
-        return completeFailure('state_mismatch', 'callback', attempt.provider);
-      }
-      if (callback.error || !callback.code) {
-        return completeFailure('invalid_callback', 'callback', attempt.provider);
-      }
-      const domain = authorizationDomain(config.public.hostedDomain);
-      if (!domain) return completeFailure('provider_misconfigured', 'exchange', attempt.provider);
-      try {
-        const body = new URLSearchParams({
-          grant_type: 'authorization_code',
-          client_id: config.public.clientId,
-          code: callback.code,
-          redirect_uri: attempt.redirectUri,
-          code_verifier: attempt.codeVerifier,
-        });
-        const response = await (config.http ?? fetch)(
-          new URL('/oauth2/token', domain).toString(),
-          {
-            method: 'POST',
-            headers: { 'content-type': 'application/x-www-form-urlencoded' },
-            body,
-          },
-        );
-        if (!response.ok) return completeFailure('code_exchange_failed', 'exchange', attempt.provider);
-        const tokens: unknown = await response.json();
-        if (!isTokenResponse(tokens)) {
-          return completeFailure('invalid_callback', 'session', attempt.provider);
-        }
-        const [access, identity] = await Promise.all([
-          verifyJwt(tokens.access_token, 'access'),
-          verifyJwt(tokens.id_token, 'id'),
-        ]);
-        if (!access.sub || access.sub !== identity.sub || identity.nonce !== attempt.nonce) {
-          return completeFailure('invalid_callback', 'session', attempt.provider);
-        }
-        const session: AuthSession = {
-          accessToken: tokens.access_token,
-          ...(tokens.refresh_token ? { refreshToken: tokens.refresh_token } : {}),
-          expiresAt: now(config) + tokens.expires_in * 1000,
-          tokenType: 'Bearer',
-          user: { id: access.sub },
-        };
-        await config.sessions.write(session);
-        return {
-          ok: true,
-          status: 'authenticated',
-          provider: attempt.provider,
-          session,
-        };
-      } catch {
-        return completeFailure('code_exchange_failed', 'exchange', attempt.provider);
-      }
-    },
-  };
+  input: CompleteOAuthAuthorizationInput,
+): Promise<AuthOAuthCompletionResult> {
+  const currentTime = now(config);
+  const attempt = await config.authorizationAttempts.consume(input.attemptId, currentTime).catch(() => null);
+  if (!attempt || attempt.expiresAt <= currentTime) {
+    return completeFailure('authorization_attempt_not_found', 'callback');
+  }
+  if (input.response.type === 'cancelled') {
+    return { ok: false, status: 'cancelled', provider: attempt.provider, reason: input.response.reason };
+  }
+  if (input.response.type === 'error') {
+    return completeFailure('provider_error', 'transport', attempt.provider);
+  }
+  const callback = parseCallback(input.response.url, attempt.redirectUri);
+  if (!callback) return completeFailure('invalid_callback', 'callback', attempt.provider);
+  if (callback.state !== attempt.state) {
+    return completeFailure('state_mismatch', 'callback', attempt.provider);
+  }
+  if (callback.error || !callback.code) {
+    return completeFailure('invalid_callback', 'callback', attempt.provider);
+  }
+  const domain = authorizationDomain(config.public.hostedDomain);
+  if (!domain) return completeFailure('provider_misconfigured', 'exchange', attempt.provider);
+  return exchangeAuthorizationCodeAsync(config, verifyJwt, attempt, callback.code, domain);
+}
+
+/*** Redeem the one-time code and retain only validated Cognito sessions. */
+async function exchangeAuthorizationCodeAsync(
+  config: CognitoAuthConfig,
+  verifyJwt: CognitoJwtVerifier,
+  attempt: CognitoAuthorizationAttempt,
+  code: string,
+  domain: URL,
+): Promise<AuthOAuthCompletionResult> {
+  try {
+    const body = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: config.public.clientId,
+      code,
+      redirect_uri: attempt.redirectUri,
+      code_verifier: attempt.codeVerifier,
+    });
+    const response = await (config.http ?? fetch)(new URL('/oauth2/token', domain).toString(), {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body,
+    });
+    if (!response.ok) return completeFailure('code_exchange_failed', 'exchange', attempt.provider);
+    const tokens: unknown = await response.json();
+    const session = await verifiedOAuthSessionAsync(config, verifyJwt, attempt, tokens);
+    if (session === null) return completeFailure('invalid_callback', 'session', attempt.provider);
+    await config.sessions.write(session);
+    return { ok: true, status: 'authenticated', provider: attempt.provider, session };
+  } catch {
+    return completeFailure('code_exchange_failed', 'exchange', attempt.provider);
+  }
+}
+
+/*** Require matching signed access/ID subjects and the exact originating OAuth nonce. */
+async function verifiedOAuthSessionAsync(
+  config: CognitoAuthConfig,
+  verifyJwt: CognitoJwtVerifier,
+  attempt: CognitoAuthorizationAttempt,
+  raw: unknown,
+): Promise<AuthSession | null> {
+  if (!isTokenResponse(raw)) return null;
+  try {
+    const [access, identity] = await Promise.all([
+      verifyJwt(raw.access_token, 'access'),
+      verifyJwt(raw.id_token, 'id'),
+    ]);
+    if (!access.sub || access.sub !== identity.sub || identity.nonce !== attempt.nonce) return null;
+    return {
+      accessToken: raw.access_token,
+      ...(raw.refresh_token ? { refreshToken: raw.refresh_token } : {}),
+      expiresAt: now(config) + raw.expires_in * 1000,
+      tokenType: 'Bearer',
+      user: { id: access.sub },
+    };
+  } catch {
+    return null;
+  }
 }
 
 /*** Restrict Cognito authorization to a configured HTTPS endpoint. */
@@ -160,7 +197,8 @@ function authorizationDomain(value: string): URL | null {
 /*** Never accept an unconfigured federated identity provider or arbitrary identity_provider. */
 function resolveProvider(config: CognitoAuthConfig, provider: string): string | null {
   if (provider === 'cognito') return '';
-  return config.public.oauthProviders?.[provider] ?? null;
+  return Object.entries(config.public.oauthProviders ?? {})
+    .find(([key]) => key === provider)?.[1] ?? null;
 }
 
 /*** Generate a cryptographically random base64url PKCE verifier, state, or nonce. */
