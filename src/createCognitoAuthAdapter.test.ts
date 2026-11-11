@@ -14,14 +14,15 @@ import type { AuthSession } from '@ankhorage/contracts/auth';
 function createAttemptStore(): CognitoAuthorizationAttemptStore {
   const attempts = new Map<string, CognitoAuthorizationAttempt>();
   return {
-    create: async (attempt) => {
-      if (attempts.has(attempt.attemptId)) throw new Error('duplicate attempt');
+    create: (attempt) => {
+      if (attempts.has(attempt.attemptId)) return Promise.reject(new Error('duplicate attempt'));
       attempts.set(attempt.attemptId, attempt);
+      return Promise.resolve();
     },
-    consume: async (id, now) => {
+    consume: (id, now) => {
       const attempt = attempts.get(id) ?? null;
       attempts.delete(id);
-      return attempt && attempt.expiresAt > now ? attempt : null;
+      return Promise.resolve(attempt && attempt.expiresAt > now ? attempt : null);
     },
   };
 }
@@ -30,9 +31,9 @@ function createAttemptStore(): CognitoAuthorizationAttemptStore {
 function createSessionStore(): CognitoSessionStore {
   const state: { session: AuthSession | null } = { session: null };
   return {
-    read: async () => state.session,
-    write: async (session) => { state.session = session; },
-    clear: async () => { state.session = null; },
+    read: () => Promise.resolve(state.session),
+    write: (session) => { state.session = session; return Promise.resolve(); },
+    clear: () => { state.session = null; return Promise.resolve(); },
   };
 }
 
@@ -53,7 +54,7 @@ function createConfig(overrides: Partial<CognitoAuthConfig> = {}): CognitoAuthCo
     }),
     sessions: createSessionStore(),
     authorizationAttempts: createAttemptStore(),
-    verifyJwt: async () => ({ sub: 'player-1' }),
+    verifyJwt: () => Promise.resolve({ sub: 'player-1' }),
     createAttemptId: () => 'attempt-1',
     now: () => 1_000,
     ...overrides,
@@ -99,18 +100,18 @@ test('completes Cognito PKCE once with verified access and nonce-bound ID JWTs',
   const nonceValue: { current: string | null } = { current: null };
   const httpCalls: string[] = [];
   const config = createConfig({
-    verifyJwt: async (_token, use) => ({
+    verifyJwt: (_token, use) => Promise.resolve({
       sub: 'player-1',
       ...(use === 'id' && nonceValue.current ? { nonce: nonceValue.current } : {}),
     }),
-    http: async (_url, init) => {
-      httpCalls.push(String(init?.body));
-      return new Response(JSON.stringify({
+    http: (_url, init) => {
+      httpCalls.push(init?.body instanceof URLSearchParams ? init.body.toString() : '');
+      return Promise.resolve(new Response(JSON.stringify({
         access_token: 'access-test',
         id_token: 'id-test',
         refresh_token: 'refresh-test',
         expires_in: 3600,
-      }), { status: 200 });
+      }), { status: 200 }));
     },
   });
   const { adapter, started, url } = await startAuthorization(config);
@@ -147,9 +148,9 @@ test('completes Cognito PKCE once with verified access and nonce-bound ID JWTs',
 test('rejects state mismatch before invoking the Cognito token endpoint', async () => {
   const calls: string[] = [];
   const config = createConfig({
-    http: async (url) => {
-      calls.push(String(url));
-      return new Response('denied', { status: 400 });
+    http: (url) => {
+      calls.push(typeof url === 'string' ? url : url.toString());
+      return Promise.resolve(new Response('denied', { status: 400 }));
     },
   });
   const { adapter } = await startAuthorization(config);
@@ -166,9 +167,9 @@ test('rejects state mismatch before invoking the Cognito token endpoint', async 
 
 test('rejects ID tokens without the expected OIDC nonce', async () => {
   const config = createConfig({
-    http: async () => new Response(JSON.stringify({
+    http: () => Promise.resolve(new Response(JSON.stringify({
       access_token: 'access-test', id_token: 'id-test', expires_in: 3600,
-    })),
+    }))),
   });
   const { adapter, started, url } = await startAuthorization(config);
   const result = await adapter.completeAuthorization({
