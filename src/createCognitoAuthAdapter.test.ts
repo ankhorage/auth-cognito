@@ -228,3 +228,84 @@ test('rejects persisted sessions with a subject that does not match the verified
     error: { code: 'invalid_session' },
   });
 });
+
+/*** Exercise real AWS SDK command serialization with a deterministic local request handler. */
+function createAwsSdkTestClient() {
+  const commands: string[] = [];
+  const client = new CognitoIdentityProviderClient({
+    region: 'eu-central-1',
+    credentials: { accessKeyId: 'test', secretAccessKey: 'test' },
+    requestHandler: {
+      handle: (request) => {
+        const target = request.headers['x-amz-target'] ?? '';
+        commands.push(target);
+        const result =
+          target.endsWith('.SignUp')
+            ? { UserSub: 'player-1', UserConfirmed: false }
+            : target.endsWith('.InitiateAuth') || target.endsWith('.GetTokensFromRefreshToken')
+              ? {
+                  AuthenticationResult: {
+                    AccessToken: 'access-token',
+                    ExpiresIn: 3600,
+                    RefreshToken: 'refresh-token',
+                    TokenType: 'Bearer',
+                  },
+                }
+              : {};
+        return Promise.resolve({
+          response: {
+            statusCode: 200,
+            headers: { 'content-type': 'application/x-amz-json-1.1' },
+            body: new TextEncoder().encode(JSON.stringify(result)),
+          },
+        });
+      },
+    },
+  });
+  return { client, commands };
+}
+
+test('performs real SDK signup, sign-in, refresh and sign-out through injected transport', async () => {
+  const { client, commands } = createAwsSdkTestClient();
+  const sessions = createSessionStore();
+  const adapter = createCognitoAuthAdapter(createConfig({ client, sessions }));
+  const identifier = { kind: 'email' as const, value: 'player@example.org' };
+
+  expect(await adapter.signUp({ identifier, password: 'S3cure-password!' })).toMatchObject({
+    ok: true, data: { id: 'player-1', email: identifier.value },
+  });
+  expect(await adapter.signIn({ identifier, password: 'S3cure-password!' })).toMatchObject({
+    ok: true, data: { user: { id: 'player-1' }, refreshToken: 'refresh-token' },
+  });
+  expect(await adapter.refreshSession()).toMatchObject({
+    ok: true, data: { user: { id: 'player-1' }, accessToken: 'access-token' },
+  });
+  expect(await adapter.signOut()).toMatchObject({ ok: true });
+  expect(await sessions.read()).toBeNull();
+  expect(commands).toEqual([
+    'AWSCognitoIdentityProviderService.SignUp',
+    'AWSCognitoIdentityProviderService.InitiateAuth',
+    'AWSCognitoIdentityProviderService.GetTokensFromRefreshToken',
+    'AWSCognitoIdentityProviderService.RevokeToken',
+  ]);
+});
+
+test('fails closed on a JWT verifier subject mismatch without saving a session', async () => {
+  const { client } = createAwsSdkTestClient();
+  const sessions = createSessionStore();
+  const adapter = createCognitoAuthAdapter(
+    createConfig({
+      client,
+      sessions,
+      verifyJwt: () => Promise.resolve({ sub: '' }),
+    }),
+  );
+
+  expect(
+    await adapter.signIn({
+      identifier: { kind: 'email', value: 'player@example.org' },
+      password: 'S3cure-password!',
+    }),
+  ).toMatchObject({ ok: false, error: { code: 'authentication_failed' } });
+  expect(await sessions.read()).toBeNull();
+});
