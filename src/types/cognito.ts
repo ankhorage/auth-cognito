@@ -1,5 +1,5 @@
-import type { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
 import type { AuthSession } from '@ankhorage/contracts/auth';
+import type { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
 
 /*** Public User Pool configuration; no AWS credentials or client secrets. */
 export interface CognitoPublicConfig {

@@ -15,12 +15,22 @@ import type {
 
 const DEFAULT_AUTHORIZATION_TTL_MS = 10 * 60 * 1000;
 const RESERVED_PARAMETERS = new Set([
-  'response_type', 'client_id', 'redirect_uri', 'scope',
-  'state', 'nonce', 'code_challenge', 'code_challenge_method', 'identity_provider',
+  'response_type',
+  'client_id',
+  'redirect_uri',
+  'scope',
+  'state',
+  'nonce',
+  'code_challenge',
+  'code_challenge_method',
+  'identity_provider',
 ]);
 
 /*** Provide single-use PKCE OAuth operations through Cognito's HTTPS authorization server. */
-export function createCognitoOAuthHandlers(config: CognitoAuthConfig, verifyJwt: CognitoJwtVerifier) {
+export function createCognitoOAuthHandlers(
+  config: CognitoAuthConfig,
+  verifyJwt: CognitoJwtVerifier,
+) {
   return {
     start: (input: StartOAuthAuthorizationInput) => startAuthorizationAsync(config, input),
     complete: (input: CompleteOAuthAuthorizationInput) =>
@@ -45,7 +55,15 @@ async function startAuthorizationAsync(
   const nonce = randomToken();
   const verifier = randomToken();
   try {
-    const url = await buildAuthorizationUrlAsync(config, input, domain, provider, state, nonce, verifier);
+    const url = await buildAuthorizationUrlAsync(
+      config,
+      input,
+      domain,
+      provider,
+      state,
+      nonce,
+      verifier,
+    );
     await config.authorizationAttempts.create({
       attemptId,
       redirectUri: input.redirectUri,
@@ -83,7 +101,10 @@ async function buildAuthorizationUrlAsync(
   url.searchParams.set('client_id', config.public.clientId);
   url.searchParams.set('response_type', 'code');
   url.searchParams.set('redirect_uri', input.redirectUri);
-  url.searchParams.set('scope', [...new Set(['openid', ...(input.scopes ?? config.public.scopes ?? [])])].join(' '));
+  url.searchParams.set(
+    'scope',
+    [...new Set(['openid', ...(input.scopes ?? config.public.scopes ?? [])])].join(' '),
+  );
   url.searchParams.set('state', state);
   url.searchParams.set('nonce', nonce);
   url.searchParams.set('code_challenge_method', 'S256');
@@ -102,12 +123,19 @@ async function completeAuthorizationAsync(
   input: CompleteOAuthAuthorizationInput,
 ): Promise<AuthOAuthCompletionResult> {
   const currentTime = now(config);
-  const attempt = await config.authorizationAttempts.consume(input.attemptId, currentTime).catch(() => null);
+  const attempt = await config.authorizationAttempts
+    .consume(input.attemptId, currentTime)
+    .catch(() => null);
   if (!attempt || attempt.expiresAt <= currentTime) {
     return completeFailure('authorization_attempt_not_found', 'callback');
   }
   if (input.response.type === 'cancelled') {
-    return { ok: false, status: 'cancelled', provider: attempt.provider, reason: input.response.reason };
+    return {
+      ok: false,
+      status: 'cancelled',
+      provider: attempt.provider,
+      reason: input.response.reason,
+    };
   }
   if (input.response.type === 'error') {
     return completeFailure('provider_error', 'transport', attempt.provider);
@@ -187,8 +215,14 @@ async function verifiedOAuthSessionAsync(
 function authorizationDomain(value: string): URL | null {
   try {
     const domain = new URL(value);
-    return domain.protocol === 'https:' && !domain.username && !domain.password
-      && domain.pathname === '/' && !domain.search && !domain.hash ? domain : null;
+    return domain.protocol === 'https:' &&
+      !domain.username &&
+      !domain.password &&
+      domain.pathname === '/' &&
+      !domain.search &&
+      !domain.hash
+      ? domain
+      : null;
   } catch {
     return null;
   }
@@ -197,22 +231,30 @@ function authorizationDomain(value: string): URL | null {
 /*** Never accept an unconfigured federated identity provider or arbitrary identity_provider. */
 function resolveProvider(config: CognitoAuthConfig, provider: string): string | null {
   if (provider === 'cognito') return '';
-  return Object.entries(config.public.oauthProviders ?? {})
-    .find(([key]) => key === provider)?.[1] ?? null;
+  return (
+    Object.entries(config.public.oauthProviders ?? {}).find(([key]) => key === provider)?.[1] ??
+    null
+  );
 }
 
 /*** Generate a cryptographically random base64url PKCE verifier, state, or nonce. */
 function randomToken(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(32));
   return btoa(String.fromCharCode(...bytes))
-    .replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/u, '');
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/u, '');
 }
 
 /*** Bind the authorization code to its originating client with an S256 challenge. */
 async function pkceChallenge(verifier: string): Promise<string> {
-  const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+  const digest = new Uint8Array(
+    await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)),
+  );
   return btoa(String.fromCharCode(...digest))
-    .replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/u, '');
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/u, '');
 }
 
 /*** Validate callback location and reject duplicate or missing OAuth parameters. */
@@ -220,7 +262,12 @@ function parseCallback(url: string, redirectUri: string) {
   try {
     const actual = new URL(url);
     const expected = new URL(redirectUri);
-    if (actual.protocol !== expected.protocol || actual.host !== expected.host || actual.pathname !== expected.pathname) return null;
+    if (
+      actual.protocol !== expected.protocol ||
+      actual.host !== expected.host ||
+      actual.pathname !== expected.pathname
+    )
+      return null;
     const state = actual.searchParams.getAll('state');
     const codes = actual.searchParams.getAll('code');
     if (state.length !== 1 || codes.length > 1) return null;
@@ -240,8 +287,13 @@ function isTokenResponse(value: unknown): value is {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
   if (!('access_token' in value) || typeof value.access_token !== 'string') return false;
   if (!('id_token' in value) || typeof value.id_token !== 'string') return false;
-  if (!('expires_in' in value) || typeof value.expires_in !== 'number'
-      || !Number.isFinite(value.expires_in) || value.expires_in <= 0) return false;
+  if (
+    !('expires_in' in value) ||
+    typeof value.expires_in !== 'number' ||
+    !Number.isFinite(value.expires_in) ||
+    value.expires_in <= 0
+  )
+    return false;
   return !('refresh_token' in value) || typeof value.refresh_token === 'string';
 }
 

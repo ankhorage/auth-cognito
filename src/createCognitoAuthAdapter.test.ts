@@ -1,3 +1,4 @@
+import type { AuthSession } from '@ankhorage/contracts/auth';
 import { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
 import { expect, test } from 'bun:test';
 
@@ -8,7 +9,6 @@ import type {
   CognitoAuthorizationAttemptStore,
   CognitoSessionStore,
 } from './types/cognito.js';
-import type { AuthSession } from '@ankhorage/contracts/auth';
 
 /*** Provide an atomic durable-attempt-shaped fake for behavior tests. */
 function createAttemptStore(): CognitoAuthorizationAttemptStore {
@@ -32,8 +32,14 @@ function createSessionStore(): CognitoSessionStore {
   const state: { session: AuthSession | null } = { session: null };
   return {
     read: () => Promise.resolve(state.session),
-    write: (session) => { state.session = session; return Promise.resolve(); },
-    clear: () => { state.session = null; return Promise.resolve(); },
+    write: (session) => {
+      state.session = session;
+      return Promise.resolve();
+    },
+    clear: () => {
+      state.session = null;
+      return Promise.resolve();
+    },
   };
 }
 
@@ -86,38 +92,49 @@ test('starts brokered Cognito authorization with strong PKCE and a one-time atte
 
 test('rejects unregistered callback URLs and unconfigured federation providers', async () => {
   const adapter = createCognitoAuthAdapter(createConfig());
-  expect(await adapter.startAuthorization({
-    provider: 'google',
-    redirectUri: 'https://wrong.example.test/callback',
-  })).toMatchObject({ ok: false, error: { code: 'invalid_redirect_uri' } });
-  expect(await adapter.startAuthorization({
-    provider: 'unapproved',
-    redirectUri: 'https://grossmeister.example.test/callback',
-  })).toMatchObject({ ok: false, error: { code: 'provider_disabled' } });
+  expect(
+    await adapter.startAuthorization({
+      provider: 'google',
+      redirectUri: 'https://wrong.example.test/callback',
+    }),
+  ).toMatchObject({ ok: false, error: { code: 'invalid_redirect_uri' } });
+  expect(
+    await adapter.startAuthorization({
+      provider: 'unapproved',
+      redirectUri: 'https://grossmeister.example.test/callback',
+    }),
+  ).toMatchObject({ ok: false, error: { code: 'provider_disabled' } });
 });
 
 test('completes Cognito PKCE once with verified access and nonce-bound ID JWTs', async () => {
   const nonceValue: { current: string | null } = { current: null };
   const httpCalls: string[] = [];
   const config = createConfig({
-    verifyJwt: (_token, use) => Promise.resolve({
-      sub: 'player-1',
-      ...(use === 'id' && nonceValue.current ? { nonce: nonceValue.current } : {}),
-    }),
+    verifyJwt: (_token, use) =>
+      Promise.resolve({
+        sub: 'player-1',
+        ...(use === 'id' && nonceValue.current ? { nonce: nonceValue.current } : {}),
+      }),
     http: (_url, init) => {
       httpCalls.push(init?.body instanceof URLSearchParams ? init.body.toString() : '');
-      return Promise.resolve(new Response(JSON.stringify({
-        access_token: 'access-test',
-        id_token: 'id-test',
-        refresh_token: 'refresh-test',
-        expires_in: 3600,
-      }), { status: 200 }));
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            access_token: 'access-test',
+            id_token: 'id-test',
+            refresh_token: 'refresh-test',
+            expires_in: 3600,
+          }),
+          { status: 200 },
+        ),
+      );
     },
   });
   const { adapter, started, url } = await startAuthorization(config);
   nonceValue.current = url.searchParams.get('nonce');
-  const callback = 'https://grossmeister.example.test/callback?code=auth-code&state='
-    + encodeURIComponent(url.searchParams.get('state') ?? '');
+  const callback =
+    'https://grossmeister.example.test/callback?code=auth-code&state=' +
+    encodeURIComponent(url.searchParams.get('state') ?? '');
   const completed = await adapter.completeAuthorization({
     attemptId: started.data.attemptId,
     response: { type: 'callback', url: callback },
@@ -129,7 +146,7 @@ test('completes Cognito PKCE once with verified access and nonce-bound ID JWTs',
   });
   expect(httpCalls).toHaveLength(1);
   expect(httpCalls[0]).toContain('code_verifier=');
-  expect((await adapter.getSession())).toMatchObject({
+  expect(await adapter.getSession()).toMatchObject({
     ok: true,
     data: { user: { id: 'player-1' } },
   });
@@ -167,17 +184,25 @@ test('rejects state mismatch before invoking the Cognito token endpoint', async 
 
 test('rejects ID tokens without the expected OIDC nonce', async () => {
   const config = createConfig({
-    http: () => Promise.resolve(new Response(JSON.stringify({
-      access_token: 'access-test', id_token: 'id-test', expires_in: 3600,
-    }))),
+    http: () =>
+      Promise.resolve(
+        new Response(
+          JSON.stringify({
+            access_token: 'access-test',
+            id_token: 'id-test',
+            expires_in: 3600,
+          }),
+        ),
+      ),
   });
   const { adapter, started, url } = await startAuthorization(config);
   const result = await adapter.completeAuthorization({
     attemptId: started.data.attemptId,
     response: {
       type: 'callback',
-      url: 'https://grossmeister.example.test/callback?code=test&state='
-        + encodeURIComponent(url.searchParams.get('state') ?? ''),
+      url:
+        'https://grossmeister.example.test/callback?code=test&state=' +
+        encodeURIComponent(url.searchParams.get('state') ?? ''),
     },
   });
   expect(result).toMatchObject({ ok: false, status: 'error', error: { code: 'invalid_callback' } });
@@ -194,6 +219,7 @@ test('rejects persisted sessions with a subject that does not match the verified
   await sessions.write({ accessToken: 'signed-token', user: { id: 'different-user' } });
   const adapter = createCognitoAuthAdapter(createConfig({ sessions }));
   expect(await adapter.getSession()).toMatchObject({
-    ok: false, error: { code: 'invalid_session' },
+    ok: false,
+    error: { code: 'invalid_session' },
   });
 });

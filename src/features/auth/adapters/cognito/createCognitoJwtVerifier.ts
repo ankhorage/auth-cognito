@@ -16,17 +16,13 @@ export function createCognitoJwtVerifier(userPoolId: string, clientId: string): 
   });
   return async (token, tokenUse) => {
     const payload =
-      tokenUse === 'access'
-        ? await accessVerifier.verify(token)
-        : await idVerifier.verify(token);
+      tokenUse === 'access' ? await accessVerifier.verify(token) : await idVerifier.verify(token);
     if (typeof payload.sub !== 'string' || !payload.sub) {
       throw new Error('Cognito JWT subject is missing.');
     }
     return {
       sub: payload.sub,
-      ...('nonce' in payload && typeof payload.nonce === 'string'
-        ? { nonce: payload.nonce }
-        : {}),
+      ...('nonce' in payload && typeof payload.nonce === 'string' ? { nonce: payload.nonce } : {}),
     };
   };
 }

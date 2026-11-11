@@ -9,6 +9,7 @@ import type {
   SignUpInput,
   VerifyOtpInput,
 } from '@ankhorage/contracts/auth';
+import type { AuthenticationResultType } from '@aws-sdk/client-cognito-identity-provider';
 import {
   ConfirmSignUpCommand,
   ForgotPasswordCommand,
@@ -18,7 +19,6 @@ import {
   RevokeTokenCommand,
   SignUpCommand,
 } from '@aws-sdk/client-cognito-identity-provider';
-import type { AuthenticationResultType } from '@aws-sdk/client-cognito-identity-provider';
 
 import type { CognitoAuthConfig, CognitoJwtVerifier } from '../../../../types/cognito.js';
 import { createCognitoJwtVerifier } from './createCognitoJwtVerifier.js';
@@ -61,7 +61,11 @@ async function signInAsync(
       }),
     );
     if (!result.AuthenticationResult) return failure('challenge_required');
-    const session = await resolveVerifiedSession(result.AuthenticationResult, verifyJwt, now(config));
+    const session = await resolveVerifiedSession(
+      result.AuthenticationResult,
+      verifyJwt,
+      now(config),
+    );
     await config.sessions.write(session);
     return { ok: true, data: session };
   } catch {
@@ -102,17 +106,16 @@ async function signUpAsync(
 /*** Translate the supported Cognito username attributes into their real provider names. */
 function identifierAttributes(input: SignUpInput) {
   if (input.identifier.kind === 'username') return [];
-  return [{
-    Name: input.identifier.kind === 'phone' ? 'phone_number' : 'email',
-    Value: input.identifier.value,
-  }];
+  return [
+    {
+      Name: input.identifier.kind === 'phone' ? 'phone_number' : 'email',
+      Value: input.identifier.value,
+    },
+  ];
 }
 
 /*** Revoke the current token or globally sign out, retaining the host's storage boundary. */
-async function signOutAsync(
-  config: CognitoAuthConfig,
-  input?: SignOutInput,
-): Promise<AuthResult> {
+async function signOutAsync(config: CognitoAuthConfig, input?: SignOutInput): Promise<AuthResult> {
   try {
     const session = await config.sessions.read();
     if (session?.accessToken) {
@@ -184,7 +187,10 @@ async function requestPasswordResetAsync(
 ): Promise<AuthResult> {
   try {
     await config.client.send(
-      new ForgotPasswordCommand({ ClientId: config.public.clientId, Username: input.identifier.value }),
+      new ForgotPasswordCommand({
+        ClientId: config.public.clientId,
+        Username: input.identifier.value,
+      }),
     );
     return { ok: true };
   } catch {
