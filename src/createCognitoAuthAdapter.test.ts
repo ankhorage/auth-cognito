@@ -251,19 +251,18 @@ function createAwsSdkTestClient() {
       handle: (request: unknown) => {
         const target = readCognitoCommandName(request);
         commands.push(target);
-        const result =
-          target.endsWith('.SignUp')
-            ? { UserSub: 'player-1', UserConfirmed: false }
-            : target.endsWith('.InitiateAuth') || target.endsWith('.GetTokensFromRefreshToken')
-              ? {
-                  AuthenticationResult: {
-                    AccessToken: 'access-token',
-                    ExpiresIn: 3600,
-                    RefreshToken: 'refresh-token',
-                    TokenType: 'Bearer',
-                  },
-                }
-              : {};
+        const result = target.endsWith('.SignUp')
+          ? { UserSub: 'player-1', UserConfirmed: false }
+          : target.endsWith('.InitiateAuth') || target.endsWith('.GetTokensFromRefreshToken')
+            ? {
+                AuthenticationResult: {
+                  AccessToken: 'access-token',
+                  ExpiresIn: 3600,
+                  RefreshToken: 'refresh-token',
+                  TokenType: 'Bearer',
+                },
+              }
+            : {};
         return Promise.resolve({
           response: {
             statusCode: 200,
@@ -284,13 +283,16 @@ test('performs real SDK signup, sign-in, refresh and sign-out through injected t
   const identifier = { kind: 'email' as const, value: 'player@example.org' };
 
   expect(await adapter.signUp({ identifier, password: 'S3cure-password!' })).toMatchObject({
-    ok: true, data: { id: 'player-1', email: identifier.value },
+    ok: true,
+    data: { id: 'player-1', email: identifier.value },
   });
   expect(await adapter.signIn({ identifier, password: 'S3cure-password!' })).toMatchObject({
-    ok: true, data: { user: { id: 'player-1' }, refreshToken: 'refresh-token' },
+    ok: true,
+    data: { user: { id: 'player-1' }, refreshToken: 'refresh-token' },
   });
   expect(await adapter.refreshSession()).toMatchObject({
-    ok: true, data: { user: { id: 'player-1' }, accessToken: 'access-token' },
+    ok: true,
+    data: { user: { id: 'player-1' }, accessToken: 'access-token' },
   });
   expect(await adapter.signOut()).toMatchObject({ ok: true });
   expect(await sessions.read()).toBeNull();
