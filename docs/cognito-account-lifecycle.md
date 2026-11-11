@@ -21,11 +21,13 @@ game ownership. Never use e-mail or mutable usernames as primary identifiers.
 
 - User Pool username/password sign-in with `USER_PASSWORD_AUTH` where enabled by the app client.
 - Registration returns the new unconfirmed or confirmed user, not fabricated session tokens.
-- Confirmation-code verification confirms sign-up; because Cognito issues no token on confirmation,
-  the neutral `verifyOtp` operation returns `sign_in_required_after_confirmation` after success.
-  The host must start a real sign-in to obtain an authenticated session.
-- Password-reset initiation; the consuming host must manage the separate confirmation/change
-  operation through the supported provider user journey.
+- Explicit `confirmCognitoSignUpAsync(config, { identifier, code })` confirms a registration and
+  returns `{ ok: true }` on success. It never fabricates a session. A real sign-in follows.
+- The neutral `AuthPort.verifyOtp` cannot return a session from Cognito registration confirmation.
+  It therefore returns `otp_session_unavailable` **without modifying the account**; the host uses
+  the explicit confirmation operation instead.
+- Password-reset initiation is provided through `requestPasswordReset` and completion through
+  `confirmCognitoPasswordResetAsync(config, { identifier, code, newPassword })`.
 - Session validation using `aws-jwt-verify` with exact User Pool, client ID and token-use claims.
 - Refresh through `GetTokensFromRefreshToken`, including refresh-token rotation.
 - Sign-out revokes refresh tokens for a single session or uses Cognito GlobalSignOut when requested.

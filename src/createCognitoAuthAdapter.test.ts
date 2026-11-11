@@ -2,7 +2,11 @@ import type { AuthSession } from '@ankhorage/contracts/auth';
 import { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
 import { expect, test } from 'bun:test';
 
-import { createCognitoAuthAdapter } from './index.js';
+import {
+  confirmCognitoPasswordResetAsync,
+  confirmCognitoSignUpAsync,
+  createCognitoAuthAdapter,
+} from './index.js';
 import type {
   CognitoAuthConfig,
   CognitoAuthorizationAttempt,
@@ -322,4 +326,62 @@ test('fails closed on a JWT verifier subject mismatch without saving a session',
     }),
   ).toMatchObject({ ok: false, error: { code: 'authentication_failed' } });
   expect(await sessions.read()).toBeNull();
+});
+
+test('Cognito registration confirmation reports success without inventing an AuthSession', async () => {
+  const { client, commands } = createAwsSdkTestClient();
+  const config = createConfig({ client });
+  const identifier = { kind: 'email' as const, value: 'player@example.org' };
+  const adapter = createCognitoAuthAdapter(config);
+
+  expect(await adapter.verifyOtp({ identifier, token: '123456' })).toMatchObject({
+    ok: false,
+    error: { code: 'otp_session_unavailable' },
+  });
+  expect(commands).toEqual([]);
+
+  expect(await confirmCognitoSignUpAsync(config, { identifier, code: '123456' })).toEqual({
+    ok: true,
+  });
+  expect(commands).toEqual(['AWSCognitoIdentityProviderService.ConfirmSignUp']);
+  expect(await config.sessions.read()).toBeNull();
+});
+
+test('Cognito forgot-password initiation and confirmation are separate truthful operations', async () => {
+  const { client, commands } = createAwsSdkTestClient();
+  const config = createConfig({ client });
+  const identifier = { kind: 'email' as const, value: 'player@example.org' };
+  const adapter = createCognitoAuthAdapter(config);
+
+  expect(await adapter.requestPasswordReset({ identifier })).toEqual({ ok: true });
+  expect(await confirmCognitoPasswordResetAsync(config, {
+    identifier,
+    code: '123456',
+    newPassword: 'A-strong-new-password!',
+  })).toEqual({ ok: true });
+  expect(commands).toEqual([
+    'AWSCognitoIdentityProviderService.ForgotPassword',
+    'AWSCognitoIdentityProviderService.ConfirmForgotPassword',
+  ]);
+  expect(await config.sessions.read()).toBeNull();
+});
+
+test('Cognito confirmation validates required inputs before contacting AWS', async () => {
+  const { client, commands } = createAwsSdkTestClient();
+  const config = createConfig({ client });
+  const identifier = { kind: 'email' as const, value: 'player@example.org' };
+
+  expect(await confirmCognitoSignUpAsync(config, { identifier, code: ' ' })).toMatchObject({
+    ok: false,
+    error: { code: 'confirmation_input_invalid' },
+  });
+  expect(await confirmCognitoPasswordResetAsync(config, {
+    identifier,
+    code: '123456',
+    newPassword: '',
+  })).toMatchObject({
+    ok: false,
+    error: { code: 'password_reset_input_invalid' },
+  });
+  expect(commands).toEqual([]);
 });

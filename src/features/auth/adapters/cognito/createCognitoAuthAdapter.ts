@@ -7,11 +7,9 @@ import type {
   SignInInput,
   SignOutInput,
   SignUpInput,
-  VerifyOtpInput,
 } from '@ankhorage/contracts/auth';
 import type { AuthenticationResultType } from '@aws-sdk/client-cognito-identity-provider';
 import {
-  ConfirmSignUpCommand,
   ForgotPasswordCommand,
   GetTokensFromRefreshTokenCommand,
   GlobalSignOutCommand,
@@ -21,6 +19,7 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 
 import type { CognitoAuthConfig, CognitoJwtVerifier } from '../../../../types/cognito.js';
+import { cognitoAuthFailure } from './cognitoAuthFailure.js';
 import { createCognitoJwtVerifier } from './createCognitoJwtVerifier.js';
 import { createCognitoOAuthHandlers } from './createCognitoOAuthHandlers.js';
 
@@ -39,7 +38,7 @@ export function createCognitoAuthAdapter(config: CognitoAuthConfig): AuthPort {
     getSession: () => getSessionAsync(config, verifyJwt),
     refreshSession: () => refreshSessionAsync(config, verifyJwt),
     requestPasswordReset: (input) => requestPasswordResetAsync(config, input),
-    verifyOtp: (input) => verifyOtpAsync(config, input),
+    verifyOtp: () => Promise.resolve(cognitoAuthFailure<AuthSession>('otp_session_unavailable')),
     startAuthorization: oauth.start,
     completeAuthorization: oauth.complete,
   };
@@ -51,7 +50,7 @@ async function signInAsync(
   verifyJwt: CognitoJwtVerifier,
   input: SignInInput,
 ): Promise<AuthResult<AuthSession>> {
-  if (!input.password) return failure('password_required');
+  if (!input.password) return cognitoAuthFailure('password_required');
   try {
     const result = await config.client.send(
       new InitiateAuthCommand({
@@ -60,7 +59,7 @@ async function signInAsync(
         AuthParameters: { USERNAME: input.identifier.value, PASSWORD: input.password },
       }),
     );
-    if (!result.AuthenticationResult) return failure('challenge_required');
+    if (!result.AuthenticationResult) return cognitoAuthFailure('challenge_required');
     const session = await resolveVerifiedSession(
       result.AuthenticationResult,
       verifyJwt,
@@ -69,7 +68,7 @@ async function signInAsync(
     await config.sessions.write(session);
     return { ok: true, data: session };
   } catch {
-    return failure('authentication_failed');
+    return cognitoAuthFailure('authentication_failed');
   }
 }
 
@@ -78,7 +77,7 @@ async function signUpAsync(
   config: CognitoAuthConfig,
   input: SignUpInput,
 ): Promise<AuthResult<AuthUser>> {
-  if (!input.password) return failure('password_required');
+  if (!input.password) return cognitoAuthFailure('password_required');
   try {
     const result = await config.client.send(
       new SignUpCommand({
@@ -88,7 +87,7 @@ async function signUpAsync(
         UserAttributes: identifierAttributes(input),
       }),
     );
-    if (!result.UserSub) return failure('provider_error');
+    if (!result.UserSub) return cognitoAuthFailure('provider_error');
     return {
       ok: true,
       data: {
@@ -99,7 +98,7 @@ async function signUpAsync(
       },
     };
   } catch {
-    return failure('registration_failed');
+    return cognitoAuthFailure('registration_failed');
   }
 }
 
@@ -130,7 +129,7 @@ async function signOutAsync(config: CognitoAuthConfig, input?: SignOutInput): Pr
     await config.sessions.clear();
     return { ok: true };
   } catch {
-    return failure('sign_out_failed');
+    return cognitoAuthFailure('sign_out_failed');
   }
 }
 
@@ -145,9 +144,9 @@ async function getSessionAsync(
     const claims = await verifyJwt(session.accessToken, 'access');
     return claims.sub === session.user.id
       ? { ok: true, data: session }
-      : failure('invalid_session');
+      : cognitoAuthFailure('invalid_session');
   } catch {
-    return failure('invalid_session');
+    return cognitoAuthFailure('invalid_session');
   }
 }
 
@@ -158,25 +157,25 @@ async function refreshSessionAsync(
 ): Promise<AuthResult<AuthSession | null>> {
   try {
     const previous = await config.sessions.read();
-    if (!previous?.refreshToken) return failure('refresh_unavailable');
+    if (!previous?.refreshToken) return cognitoAuthFailure('refresh_unavailable');
     const result = await config.client.send(
       new GetTokensFromRefreshTokenCommand({
         ClientId: config.public.clientId,
         RefreshToken: previous.refreshToken,
       }),
     );
-    if (!result.AuthenticationResult) return failure('refresh_failed');
+    if (!result.AuthenticationResult) return cognitoAuthFailure('refresh_failed');
     const session = await resolveVerifiedSession(
       result.AuthenticationResult,
       verifyJwt,
       now(config),
       previous.refreshToken,
     );
-    if (session.user.id !== previous.user.id) return failure('invalid_session');
+    if (session.user.id !== previous.user.id) return cognitoAuthFailure('invalid_session');
     await config.sessions.write(session);
     return { ok: true, data: session };
   } catch {
-    return failure('refresh_failed');
+    return cognitoAuthFailure('refresh_failed');
   }
 }
 
@@ -194,26 +193,7 @@ async function requestPasswordResetAsync(
     );
     return { ok: true };
   } catch {
-    return failure('password_reset_failed');
-  }
-}
-
-/*** Confirm one sign-up OTP; require a real subsequent sign-in to obtain JWTs. */
-async function verifyOtpAsync(
-  config: CognitoAuthConfig,
-  input: VerifyOtpInput,
-): Promise<AuthResult<AuthSession>> {
-  try {
-    await config.client.send(
-      new ConfirmSignUpCommand({
-        ClientId: config.public.clientId,
-        Username: input.identifier.value,
-        ConfirmationCode: input.token,
-      }),
-    );
-    return failure('sign_in_required_after_confirmation');
-  } catch {
-    return failure('otp_verification_failed');
+    return cognitoAuthFailure('password_reset_failed');
   }
 }
 
@@ -238,11 +218,6 @@ async function resolveVerifiedSession(
     tokenType: tokens.TokenType ?? 'Bearer',
     user: { id: claims.sub },
   };
-}
-
-/*** Convert provider exceptions into consistent secret-free auth errors. */
-function failure<T = void>(code: string): AuthResult<T> {
-  return { ok: false, error: { code, message: 'Cognito authentication operation failed.' } };
 }
 
 /*** Centralize time in milliseconds for session and OAuth expiration. */

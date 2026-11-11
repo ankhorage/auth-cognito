@@ -1,4 +1,4 @@
-import type { AuthSession } from '@ankhorage/contracts/auth';
+import type { AuthIdentifier, AuthSession } from '@ankhorage/contracts/auth';
 import type { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
 
 /*** Public User Pool configuration; no AWS credentials or client secrets. */
@@ -58,4 +58,17 @@ export interface CognitoAuthConfig {
   readonly now?: () => number;
   readonly createAttemptId?: () => string;
   readonly authorizationAttemptTtlMs?: number;
+}
+
+/*** Confirm registration without claiming Cognito has issued a signed session. */
+export interface CognitoSignUpConfirmationInput {
+  readonly identifier: AuthIdentifier;
+  readonly code: string;
+}
+
+/*** Complete a previously requested password reset with the received confirmation code. */
+export interface CognitoPasswordResetCompletionInput {
+  readonly identifier: AuthIdentifier;
+  readonly code: string;
+  readonly newPassword: string;
 }
