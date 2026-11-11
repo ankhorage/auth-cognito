@@ -229,6 +229,18 @@ test('rejects persisted sessions with a subject that does not match the verified
   });
 });
 
+/*** Read only the typed AWS JSON command target from an untrusted SDK request. */
+function readCognitoCommandName(request: unknown): string {
+  if (typeof request !== 'object' || request === null || !('headers' in request)) {
+    return '';
+  }
+  const headers = request.headers;
+  if (typeof headers !== 'object' || headers === null || !('x-amz-target' in headers)) {
+    return '';
+  }
+  return typeof headers['x-amz-target'] === 'string' ? headers['x-amz-target'] : '';
+}
+
 /*** Exercise real AWS SDK command serialization with a deterministic local request handler. */
 function createAwsSdkTestClient() {
   const commands: string[] = [];
@@ -236,8 +248,8 @@ function createAwsSdkTestClient() {
     region: 'eu-central-1',
     credentials: { accessKeyId: 'test', secretAccessKey: 'test' },
     requestHandler: {
-      handle: (request) => {
-        const target = request.headers['x-amz-target'] ?? '';
+      handle: (request: unknown) => {
+        const target = readCognitoCommandName(request);
         commands.push(target);
         const result =
           target.endsWith('.SignUp')
