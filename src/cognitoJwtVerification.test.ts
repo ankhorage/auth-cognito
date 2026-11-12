@@ -1,5 +1,9 @@
+import { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
 import { expect, test } from 'bun:test';
+
+import { createSessionStore } from './cognitoTestSupport.test.js';
+import { createCognitoAuthAdapter } from './index.js';
 
 const userPoolId = 'eu-central-1_fixture';
 const clientId = 'client_fixture';
@@ -56,6 +60,35 @@ async function createSigningKey() {
       e: exported.e,
     },
   };
+}
+
+/*** Build the adapter with one persisted session and its JWT-verification boundary. */
+async function createVerifierAdapter(
+  accessToken: string,
+  subject: string,
+  verifyJwt: (token: string, tokenUse: 'access' | 'id') => Promise<{ readonly sub: string }>,
+) {
+  const sessions = createSessionStore();
+  await sessions.write({ accessToken, user: { id: subject } });
+  return createCognitoAuthAdapter({
+    public: {
+      region: 'eu-central-1',
+      userPoolId,
+      clientId,
+      hostedDomain: 'https://login.example.test',
+      redirectUris: ['https://grossmeister.example.test/callback'],
+    },
+    client: new CognitoIdentityProviderClient({
+      region: 'eu-central-1',
+      credentials: { accessKeyId: 'test', secretAccessKey: 'test' },
+    }),
+    sessions,
+    verifyJwt,
+    authorizationAttempts: {
+      create: () => Promise.resolve(),
+      consume: () => Promise.resolve(null),
+    },
+  });
 }
 
 test('Cognito signed access JWT rejects bad issuer, client, use, expiry and signature', async () => {
@@ -121,4 +154,43 @@ test('Cognito ID JWT enforces signed client audience and correct token use', asy
   expect(() => verifier.verifySync(wrongAudience)).toThrow();
   const wrongUse = await signJwt({ ...claims, token_use: 'access' }, trusted.privateKey);
   expect(() => verifier.verifySync(wrongUse)).toThrow();
+});
+
+test('Cognito adapter accepts signed sessions and rejects forged ones through its verifier boundary', async () => {
+  const trusted = await createSigningKey();
+  const untrusted = await createSigningKey();
+  const verifier = CognitoJwtVerifier.create({ userPoolId, clientId, tokenUse: 'access' });
+  verifier.cacheJwks({ keys: [trusted.jwk] });
+  const now = Math.floor(Date.now() / 1_000);
+  const claims = {
+    sub: 'adapter-player-sub',
+    iss: issuer,
+    token_use: 'access',
+    client_id: clientId,
+    auth_time: now - 30,
+    iat: now - 30,
+    exp: now + 300,
+  };
+  const valid = await signJwt(claims, trusted.privateKey);
+  const forged = await signJwt(claims, untrusted.privateKey);
+  const verifyJwt = (token: string, tokenUse: 'access' | 'id') => {
+    if (tokenUse !== 'access')
+      return Promise.reject(new Error('Expected access token verification.'));
+    const payload = verifier.verifySync(token);
+    if (typeof payload.sub !== 'string')
+      return Promise.reject(new Error('Expected a Cognito subject.'));
+    return Promise.resolve({ sub: payload.sub });
+  };
+
+  const validAdapter = await createVerifierAdapter(valid, claims.sub, verifyJwt);
+  expect(await validAdapter.getSession()).toMatchObject({
+    ok: true,
+    data: { user: { id: claims.sub } },
+  });
+
+  const forgedAdapter = await createVerifierAdapter(forged, claims.sub, verifyJwt);
+  expect(await forgedAdapter.getSession()).toMatchObject({
+    ok: false,
+    error: { code: 'invalid_session' },
+  });
 });
