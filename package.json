@@ -1,7 +1,7 @@
 {
   "name": "@ankhorage/auth-cognito",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Amazon Cognito User Pools adapter implementing the provider-neutral Ankhorage auth port.",
   "homepage": "https://github.com/ankhorage/auth-cognito#readme",
   "bugs": {

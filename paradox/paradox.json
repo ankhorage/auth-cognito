@@ -1,0 +1,1632 @@
+{
+  "packageName": "COGNITO AUTH",
+  "packageId": "@ankhorage/auth-cognito",
+  "description": "Amazon Cognito User Pools adapter implementing the provider-neutral Ankhorage auth port.",
+  "collaborators": null,
+  "donation": null,
+  "badges": [
+    {
+      "id": "license",
+      "label": "license",
+      "value": "MIT",
+      "color": "2563eb"
+    },
+    {
+      "id": "npm",
+      "label": "npm",
+      "value": "v0.1.0",
+      "color": "cb3837"
+    },
+    {
+      "id": "runtime",
+      "label": "runtime",
+      "value": "bun",
+      "color": "f59e0b"
+    },
+    {
+      "id": "typescript",
+      "label": "typescript",
+      "value": "strict",
+      "color": "2563eb"
+    },
+    {
+      "id": "eslint",
+      "label": "eslint",
+      "value": "checked",
+      "color": "0a7f3f"
+    },
+    {
+      "id": "prettier",
+      "label": "prettier",
+      "value": "checked",
+      "color": "0a7f3f"
+    },
+    {
+      "id": "build",
+      "label": "build",
+      "value": "checked",
+      "color": "0a7f3f"
+    },
+    {
+      "id": "tests",
+      "label": "tests",
+      "value": "checked",
+      "color": "0a7f3f"
+    },
+    {
+      "id": "docs",
+      "label": "paradox",
+      "value": "canonical",
+      "color": "0a7f3f"
+    }
+  ],
+  "usage": {
+    "packageName": "@ankhorage/auth-cognito",
+    "command": "ankh auth-cognito --help"
+  },
+  "usageEntries": [],
+  "exampleCount": 0,
+  "findings": [],
+  "config": null,
+  "entrypoints": [
+    "src/index.ts"
+  ],
+  "modules": [
+    {
+      "path": "src/features/auth/adapters/cognito/cognitoAuthFailure.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "cognitoAuthFailure"
+      ]
+    },
+    {
+      "path": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/auth/adapters/cognito/cognitoAuthFailure.ts",
+        "src/types/cognito.ts"
+      ],
+      "exports": [
+        "confirmCognitoPasswordResetAsync"
+      ]
+    },
+    {
+      "path": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/auth/adapters/cognito/cognitoAuthFailure.ts",
+        "src/types/cognito.ts"
+      ],
+      "exports": [
+        "confirmCognitoSignUpAsync"
+      ]
+    },
+    {
+      "path": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/auth/adapters/cognito/cognitoAuthFailure.ts",
+        "src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts",
+        "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "src/types/cognito.ts"
+      ],
+      "exports": [
+        "createCognitoAuthAdapter"
+      ]
+    },
+    {
+      "path": "src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/types/cognito.ts"
+      ],
+      "exports": [
+        "createCognitoJwtVerifier"
+      ]
+    },
+    {
+      "path": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/types/cognito.ts"
+      ],
+      "exports": [
+        "createCognitoOAuthHandlers"
+      ]
+    },
+    {
+      "path": "src/index.ts",
+      "isEntrypoint": true,
+      "dependencies": [],
+      "exports": [
+        "CognitoAuthConfig",
+        "CognitoAuthorizationAttempt",
+        "CognitoAuthorizationAttemptStore",
+        "CognitoJwtVerifier",
+        "CognitoPasswordResetCompletionInput",
+        "CognitoPublicConfig",
+        "CognitoSessionStore",
+        "CognitoSignUpConfirmationInput",
+        "CognitoVerifiedClaims",
+        "confirmCognitoPasswordResetAsync",
+        "confirmCognitoSignUpAsync",
+        "createCognitoAuthAdapter"
+      ]
+    },
+    {
+      "path": "src/types/cognito.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "CognitoAuthConfig",
+        "CognitoAuthorizationAttempt",
+        "CognitoAuthorizationAttemptStore",
+        "CognitoJwtVerifier",
+        "CognitoPasswordResetCompletionInput",
+        "CognitoPublicConfig",
+        "CognitoSessionStore",
+        "CognitoSignUpConfirmationInput",
+        "CognitoVerifiedClaims"
+      ]
+    }
+  ],
+  "exports": [
+    {
+      "name": "CognitoAuthConfig",
+      "title": null,
+      "description": "Server/host-owned adapter dependencies; credentials remain within the SDK client.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "type",
+      "modulePath": "src/types/cognito.ts",
+      "sourceLocation": {
+        "filePath": "src/types/cognito.ts",
+        "line": 51,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "CognitoAuthorizationAttemptStore",
+        "CognitoJwtVerifier",
+        "CognitoPublicConfig",
+        "CognitoSessionStore"
+      ],
+      "signatures": [],
+      "members": [
+        {
+          "name": "authorizationAttempts",
+          "kind": "property",
+          "type": "CognitoAuthorizationAttemptStore",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "authorizationAttemptTtlMs",
+          "kind": "property",
+          "type": "number | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "client",
+          "kind": "property",
+          "type": "CognitoIdentityProviderClient",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "createAttemptId",
+          "kind": "property",
+          "type": "(() => string) | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "http",
+          "kind": "property",
+          "type": "typeof fetch | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "now",
+          "kind": "property",
+          "type": "(() => number) | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "public",
+          "kind": "property",
+          "type": "CognitoPublicConfig",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "sessions",
+          "kind": "property",
+          "type": "CognitoSessionStore",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "verifyJwt",
+          "kind": "property",
+          "type": "CognitoJwtVerifier | undefined",
+          "required": false,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "CognitoAuthorizationAttempt",
+      "title": null,
+      "description": "Persist an OAuth PKCE authorization attempt with atomic one-time consumption.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "type",
+      "modulePath": "src/types/cognito.ts",
+      "sourceLocation": {
+        "filePath": "src/types/cognito.ts",
+        "line": 23,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "attemptId",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "codeVerifier",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "expiresAt",
+          "kind": "property",
+          "type": "number",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "nonce",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "provider",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "redirectUri",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "state",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "CognitoAuthorizationAttemptStore",
+      "title": null,
+      "description": null,
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "type",
+      "modulePath": "src/types/cognito.ts",
+      "sourceLocation": {
+        "filePath": "src/types/cognito.ts",
+        "line": 33,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "CognitoAuthorizationAttempt"
+      ],
+      "signatures": [],
+      "members": [
+        {
+          "name": "consume",
+          "kind": "method",
+          "type": "(attemptId: string, now: number) => Promise<CognitoAuthorizationAttempt | null>",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "create",
+          "kind": "method",
+          "type": "(attempt: CognitoAuthorizationAttempt) => Promise<void>",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "CognitoJwtVerifier",
+      "title": null,
+      "description": "Verify JWTs against this User Pool, app client, expiry, signature, and token use.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "unknown",
+      "modulePath": "src/types/cognito.ts",
+      "sourceLocation": {
+        "filePath": "src/types/cognito.ts",
+        "line": 45,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "CognitoPasswordResetCompletionInput",
+      "title": null,
+      "description": "Complete a previously requested password reset with the received confirmation code.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "type",
+      "modulePath": "src/types/cognito.ts",
+      "sourceLocation": {
+        "filePath": "src/types/cognito.ts",
+        "line": 70,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "code",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "identifier",
+          "kind": "property",
+          "type": "AuthIdentifier",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "newPassword",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "CognitoPublicConfig",
+      "title": null,
+      "description": "Public User Pool configuration; no AWS credentials or client secrets.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "type",
+      "modulePath": "src/types/cognito.ts",
+      "sourceLocation": {
+        "filePath": "src/types/cognito.ts",
+        "line": 5,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "clientId",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "hostedDomain",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "oauthProviders",
+          "kind": "property",
+          "type": "Readonly<Record<string, string>> | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "redirectUris",
+          "kind": "property",
+          "type": "readonly string[]",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "region",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "scopes",
+          "kind": "property",
+          "type": "readonly string[] | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "userPoolId",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "CognitoSessionStore",
+      "title": null,
+      "description": "Persist browser or native session tokens in a host-owned secure store.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "type",
+      "modulePath": "src/types/cognito.ts",
+      "sourceLocation": {
+        "filePath": "src/types/cognito.ts",
+        "line": 16,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "clear",
+          "kind": "method",
+          "type": "() => Promise<void>",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "read",
+          "kind": "method",
+          "type": "() => Promise<AuthSession | null>",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "write",
+          "kind": "method",
+          "type": "(session: AuthSession) => Promise<void>",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "CognitoSignUpConfirmationInput",
+      "title": null,
+      "description": "Confirm registration without claiming Cognito has issued a signed session.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "type",
+      "modulePath": "src/types/cognito.ts",
+      "sourceLocation": {
+        "filePath": "src/types/cognito.ts",
+        "line": 64,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "code",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "identifier",
+          "kind": "property",
+          "type": "AuthIdentifier",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "CognitoVerifiedClaims",
+      "title": null,
+      "description": "Verified claims contain the stable Cognito sub identifier.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "type",
+      "modulePath": "src/types/cognito.ts",
+      "sourceLocation": {
+        "filePath": "src/types/cognito.ts",
+        "line": 39,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "nonce",
+          "kind": "property",
+          "type": "string | undefined",
+          "required": false,
+          "description": null
+        },
+        {
+          "name": "sub",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "confirmCognitoPasswordResetAsync",
+      "title": null,
+      "description": "Complete Cognito's password reset with a confirmed code and user-supplied new password.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "function",
+      "modulePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts",
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts",
+        "line": 11,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "CognitoAuthConfig",
+        "CognitoPasswordResetCompletionInput"
+      ],
+      "signatures": [
+        {
+          "label": "(config: CognitoAuthConfig, input: CognitoPasswordResetCompletionInput) => Promise<AuthResult>",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "CognitoAuthConfig",
+              "required": true,
+              "description": null
+            },
+            {
+              "name": "input",
+              "type": "CognitoPasswordResetCompletionInput",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "Promise<AuthResult>",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "confirmCognitoSignUpAsync",
+      "title": null,
+      "description": "Confirm registration without issuing or pretending to possess a Cognito session.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "function",
+      "modulePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts",
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts",
+        "line": 11,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "CognitoAuthConfig",
+        "CognitoSignUpConfirmationInput"
+      ],
+      "signatures": [
+        {
+          "label": "(config: CognitoAuthConfig, input: CognitoSignUpConfirmationInput) => Promise<AuthResult>",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "CognitoAuthConfig",
+              "required": true,
+              "description": null
+            },
+            {
+              "name": "input",
+              "type": "CognitoSignUpConfirmationInput",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "Promise<AuthResult>",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "createCognitoAuthAdapter",
+      "title": null,
+      "description": "Implement the portable AuthPort through a host-owned AWS Cognito User Pool client.",
+      "isReadme": false,
+      "see": [],
+      "security": [],
+      "kind": "function",
+      "modulePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 27,
+        "column": 1
+      },
+      "exportPaths": [
+        "src/index.ts"
+      ],
+      "relatedSymbols": [
+        "CognitoAuthConfig"
+      ],
+      "signatures": [
+        {
+          "label": "(config: CognitoAuthConfig) => AuthPort",
+          "parameters": [
+            {
+              "name": "config",
+              "type": "CognitoAuthConfig",
+              "required": true,
+              "description": null
+            }
+          ],
+          "returnType": "AuthPort",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    }
+  ],
+  "components": [],
+  "sourceFunctions": [
+    {
+      "name": "cognitoAuthFailure",
+      "description": "Normalize Cognito failures without leaking tokens, provider messages or credentials.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/cognitoAuthFailure.ts",
+        "line": 4,
+        "column": 1
+      }
+    },
+    {
+      "name": "confirmCognitoPasswordResetAsync",
+      "description": "Complete Cognito's password reset with a confirmed code and user-supplied new password.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts",
+        "line": 11,
+        "column": 1
+      }
+    },
+    {
+      "name": "confirmCognitoSignUpAsync",
+      "description": "Confirm registration without issuing or pretending to possess a Cognito session.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts",
+        "line": 11,
+        "column": 1
+      }
+    },
+    {
+      "name": "createCognitoAuthAdapter",
+      "description": "Implement the portable AuthPort through a host-owned AWS Cognito User Pool client.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 27,
+        "column": 1
+      }
+    },
+    {
+      "name": "signInAsync",
+      "description": "Sign in through a supported Cognito password flow and verify its actual JWT.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 48,
+        "column": 1
+      }
+    },
+    {
+      "name": "signUpAsync",
+      "description": "Return a Cognito user after signup without fabricating a session for an unconfirmed account.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 76,
+        "column": 1
+      }
+    },
+    {
+      "name": "identifierAttributes",
+      "description": "Translate the supported Cognito username attributes into their real provider names.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 106,
+        "column": 1
+      }
+    },
+    {
+      "name": "signOutAsync",
+      "description": "Revoke the current token or globally sign out, retaining the host's storage boundary.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 117,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSessionAsync",
+      "description": "Validate any host-persisted user identity against the signed Cognito subject.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 137,
+        "column": 1
+      }
+    },
+    {
+      "name": "refreshSessionAsync",
+      "description": "Refresh Cognito tokens using the rotation-safe token exchange API.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 154,
+        "column": 1
+      }
+    },
+    {
+      "name": "requestPasswordResetAsync",
+      "description": "Initiate the provider's reset flow without exposing provider exception payloads.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 183,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveVerifiedSession",
+      "description": "Validate the Cognito access JWT and derive the stable subject, never an email as identity.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 201,
+        "column": 1
+      }
+    },
+    {
+      "name": "now",
+      "description": "Centralize time in milliseconds for session and OAuth expiration.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "line": 224,
+        "column": 1
+      }
+    },
+    {
+      "name": "createCognitoJwtVerifier",
+      "description": "Verify access and ID JWTs with the configured User Pool and Cognito app client.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts",
+        "line": 6,
+        "column": 1
+      }
+    },
+    {
+      "name": "createCognitoOAuthHandlers",
+      "description": "Provide single-use PKCE OAuth operations through Cognito's HTTPS authorization server.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 30,
+        "column": 1
+      }
+    },
+    {
+      "name": "startAuthorizationAsync",
+      "description": "Persist an authorization-code challenge before exposing the outbound redirect.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 42,
+        "column": 1
+      }
+    },
+    {
+      "name": "buildAuthorizationUrlAsync",
+      "description": "Construct a registered Cognito authorize URL with S256 PKCE, state and nonce.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 91,
+        "column": 1
+      }
+    },
+    {
+      "name": "completeAuthorizationAsync",
+      "description": "Consume one callback attempt and reject expired, replayed, or mismatched authorization.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 120,
+        "column": 1
+      }
+    },
+    {
+      "name": "exchangeAuthorizationCodeAsync",
+      "description": "Redeem the one-time code and retain only validated Cognito sessions.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 157,
+        "column": 1
+      }
+    },
+    {
+      "name": "verifiedOAuthSessionAsync",
+      "description": "Require matching signed access/ID subjects and the exact originating OAuth nonce.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 189,
+        "column": 1
+      }
+    },
+    {
+      "name": "authorizationDomain",
+      "description": "Restrict Cognito authorization to a configured HTTPS endpoint.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 215,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveProvider",
+      "description": "Never accept an unconfigured federated identity provider or arbitrary identity_provider.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 232,
+        "column": 1
+      }
+    },
+    {
+      "name": "randomToken",
+      "description": "Generate a cryptographically random base64url PKCE verifier, state, or nonce.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 241,
+        "column": 1
+      }
+    },
+    {
+      "name": "pkceChallenge",
+      "description": "Bind the authorization code to its originating client with an S256 challenge.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 250,
+        "column": 1
+      }
+    },
+    {
+      "name": "parseCallback",
+      "description": "Validate callback location and reject duplicate or missing OAuth parameters.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 261,
+        "column": 1
+      }
+    },
+    {
+      "name": "isTokenResponse",
+      "description": "Decode the untrusted token response without accepting incomplete or malformed sessions.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 281,
+        "column": 1
+      }
+    },
+    {
+      "name": "startFailure",
+      "description": "Produce an OAuth start error with no callback, code, or token details.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 301,
+        "column": 1
+      }
+    },
+    {
+      "name": "completeFailure",
+      "description": "Produce an OAuth completion error with no sensitive provider payload.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 306,
+        "column": 1
+      }
+    },
+    {
+      "name": "oauthError",
+      "description": "Normalize Cognito OAuth errors using released portable Auth contracts.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 315,
+        "column": 1
+      }
+    },
+    {
+      "name": "now",
+      "description": "Resolve the injected deterministic clock for durable OAuth attempt expiration.",
+      "see": [],
+      "security": [],
+      "sourceLocation": {
+        "filePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "line": 330,
+        "column": 1
+      }
+    }
+  ],
+  "sequenceScenarios": [
+    {
+      "kind": "export",
+      "name": "confirmCognitoPasswordResetAsync",
+      "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts",
+      "symbolName": "confirmCognitoPasswordResetAsync",
+      "description": "Complete Cognito's password reset with a confirmed code and user-supplied new password.",
+      "isReadme": false
+    },
+    {
+      "kind": "export",
+      "name": "confirmCognitoSignUpAsync",
+      "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts",
+      "symbolName": "confirmCognitoSignUpAsync",
+      "description": "Confirm registration without issuing or pretending to possess a Cognito session.",
+      "isReadme": false
+    },
+    {
+      "kind": "export",
+      "name": "createCognitoAuthAdapter",
+      "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+      "symbolName": "createCognitoAuthAdapter",
+      "description": "Implement the portable AuthPort through a host-owned AWS Cognito User Pool client.",
+      "isReadme": false
+    }
+  ],
+  "graphs": {
+    "imports": [
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/types/cognito.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts",
+        "toPath": "src/types/cognito.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts",
+        "toPath": "src/features/auth/adapters/cognito/cognitoAuthFailure.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts",
+        "toPath": "src/types/cognito.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts",
+        "toPath": "src/features/auth/adapters/cognito/cognitoAuthFailure.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "toPath": "src/types/cognito.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "toPath": "src/features/auth/adapters/cognito/cognitoAuthFailure.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "toPath": "src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts",
+        "toPath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts",
+        "toPath": "src/types/cognito.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts"
+      },
+      {
+        "fromPath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts",
+        "toPath": "src/types/cognito.ts",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      }
+    ],
+    "calls": [
+      {
+        "fromSymbol": "confirmCognitoPasswordResetAsync",
+        "toSymbol": "cognitoAuthFailure",
+        "callExpression": "cognitoAuthFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts"
+      },
+      {
+        "fromSymbol": "confirmCognitoSignUpAsync",
+        "toSymbol": "cognitoAuthFailure",
+        "callExpression": "cognitoAuthFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts"
+      },
+      {
+        "fromSymbol": "createCognitoAuthAdapter",
+        "toSymbol": "createCognitoJwtVerifier",
+        "callExpression": "createCognitoJwtVerifier",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "createCognitoAuthAdapter",
+        "toSymbol": "createCognitoOAuthHandlers",
+        "callExpression": "createCognitoOAuthHandlers",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signIn",
+        "toSymbol": "signInAsync",
+        "callExpression": "signInAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signUp",
+        "toSymbol": "signUpAsync",
+        "callExpression": "signUpAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signOut",
+        "toSymbol": "signOutAsync",
+        "callExpression": "signOutAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "getSession",
+        "toSymbol": "getSessionAsync",
+        "callExpression": "getSessionAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "refreshSession",
+        "toSymbol": "refreshSessionAsync",
+        "callExpression": "refreshSessionAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "requestPasswordReset",
+        "toSymbol": "requestPasswordResetAsync",
+        "callExpression": "requestPasswordResetAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "verifyOtp",
+        "toSymbol": "cognitoAuthFailure",
+        "callExpression": "cognitoAuthFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signInAsync",
+        "toSymbol": "cognitoAuthFailure",
+        "callExpression": "cognitoAuthFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signInAsync",
+        "toSymbol": "resolveVerifiedSession",
+        "callExpression": "resolveVerifiedSession",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signInAsync",
+        "toSymbol": "now",
+        "callExpression": "now",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signInAsync",
+        "toSymbol": "write",
+        "callExpression": "config.sessions.write",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signUpAsync",
+        "toSymbol": "cognitoAuthFailure",
+        "callExpression": "cognitoAuthFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signUpAsync",
+        "toSymbol": "identifierAttributes",
+        "callExpression": "identifierAttributes",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signOutAsync",
+        "toSymbol": "read",
+        "callExpression": "config.sessions.read",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signOutAsync",
+        "toSymbol": "clear",
+        "callExpression": "config.sessions.clear",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "signOutAsync",
+        "toSymbol": "cognitoAuthFailure",
+        "callExpression": "cognitoAuthFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "getSessionAsync",
+        "toSymbol": "read",
+        "callExpression": "config.sessions.read",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "getSessionAsync",
+        "toSymbol": "verifyJwt",
+        "callExpression": "verifyJwt",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "getSessionAsync",
+        "toSymbol": "cognitoAuthFailure",
+        "callExpression": "cognitoAuthFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "refreshSessionAsync",
+        "toSymbol": "read",
+        "callExpression": "config.sessions.read",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "refreshSessionAsync",
+        "toSymbol": "cognitoAuthFailure",
+        "callExpression": "cognitoAuthFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "refreshSessionAsync",
+        "toSymbol": "resolveVerifiedSession",
+        "callExpression": "resolveVerifiedSession",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "refreshSessionAsync",
+        "toSymbol": "now",
+        "callExpression": "now",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "refreshSessionAsync",
+        "toSymbol": "write",
+        "callExpression": "config.sessions.write",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "requestPasswordResetAsync",
+        "toSymbol": "cognitoAuthFailure",
+        "callExpression": "cognitoAuthFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "resolveVerifiedSession",
+        "toSymbol": "verifyJwt",
+        "callExpression": "verifyJwt",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "now",
+        "toSymbol": "__type",
+        "callExpression": "(config.now ?? Date.now)",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "start",
+        "toSymbol": "startAuthorizationAsync",
+        "callExpression": "startAuthorizationAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "complete",
+        "toSymbol": "completeAuthorizationAsync",
+        "callExpression": "completeAuthorizationAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "startAuthorizationAsync",
+        "toSymbol": "authorizationDomain",
+        "callExpression": "authorizationDomain",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "startAuthorizationAsync",
+        "toSymbol": "startFailure",
+        "callExpression": "startFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "startAuthorizationAsync",
+        "toSymbol": "resolveProvider",
+        "callExpression": "resolveProvider",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "startAuthorizationAsync",
+        "toSymbol": "__type",
+        "callExpression": "(config.createAttemptId ?? crypto.randomUUID)",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "startAuthorizationAsync",
+        "toSymbol": "randomToken",
+        "callExpression": "randomToken",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "startAuthorizationAsync",
+        "toSymbol": "buildAuthorizationUrlAsync",
+        "callExpression": "buildAuthorizationUrlAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "startAuthorizationAsync",
+        "toSymbol": "create",
+        "callExpression": "config.authorizationAttempts.create",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "startAuthorizationAsync",
+        "toSymbol": "now",
+        "callExpression": "now",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "buildAuthorizationUrlAsync",
+        "toSymbol": "pkceChallenge",
+        "callExpression": "pkceChallenge",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "completeAuthorizationAsync",
+        "toSymbol": "now",
+        "callExpression": "now",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "completeAuthorizationAsync",
+        "toSymbol": "consume",
+        "callExpression": "config.authorizationAttempts\n    .consume",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "completeAuthorizationAsync",
+        "toSymbol": "completeFailure",
+        "callExpression": "completeFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "completeAuthorizationAsync",
+        "toSymbol": "parseCallback",
+        "callExpression": "parseCallback",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "completeAuthorizationAsync",
+        "toSymbol": "authorizationDomain",
+        "callExpression": "authorizationDomain",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "completeAuthorizationAsync",
+        "toSymbol": "exchangeAuthorizationCodeAsync",
+        "callExpression": "exchangeAuthorizationCodeAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "exchangeAuthorizationCodeAsync",
+        "toSymbol": "completeFailure",
+        "callExpression": "completeFailure",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "exchangeAuthorizationCodeAsync",
+        "toSymbol": "verifiedOAuthSessionAsync",
+        "callExpression": "verifiedOAuthSessionAsync",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "exchangeAuthorizationCodeAsync",
+        "toSymbol": "write",
+        "callExpression": "config.sessions.write",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "verifiedOAuthSessionAsync",
+        "toSymbol": "isTokenResponse",
+        "callExpression": "isTokenResponse",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "verifiedOAuthSessionAsync",
+        "toSymbol": "verifyJwt",
+        "callExpression": "verifyJwt",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "verifiedOAuthSessionAsync",
+        "toSymbol": "now",
+        "callExpression": "now",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "startFailure",
+        "toSymbol": "oauthError",
+        "callExpression": "oauthError",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "completeFailure",
+        "toSymbol": "oauthError",
+        "callExpression": "oauthError",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      },
+      {
+        "fromSymbol": "now",
+        "toSymbol": "__type",
+        "callExpression": "(config.now ?? Date.now)",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"
+      }
+    ],
+    "typeReferences": [
+      {
+        "fromSymbol": "confirmCognitoPasswordResetAsync",
+        "toType": "AuthResult",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts"
+      },
+      {
+        "fromSymbol": "confirmCognitoPasswordResetAsync",
+        "toType": "CognitoAuthConfig",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts"
+      },
+      {
+        "fromSymbol": "confirmCognitoPasswordResetAsync",
+        "toType": "CognitoPasswordResetCompletionInput",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts"
+      },
+      {
+        "fromSymbol": "confirmCognitoSignUpAsync",
+        "toType": "AuthResult",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts"
+      },
+      {
+        "fromSymbol": "confirmCognitoSignUpAsync",
+        "toType": "CognitoAuthConfig",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts"
+      },
+      {
+        "fromSymbol": "confirmCognitoSignUpAsync",
+        "toType": "CognitoSignUpConfirmationInput",
+        "sourcePath": "src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts"
+      },
+      {
+        "fromSymbol": "createCognitoAuthAdapter",
+        "toType": "AuthPort",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "createCognitoAuthAdapter",
+        "toType": "CognitoAuthConfig",
+        "sourcePath": "src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"
+      },
+      {
+        "fromSymbol": "CognitoAuthConfig",
+        "toType": "CognitoAuthorizationAttemptStore",
+        "sourcePath": "src/types/cognito.ts"
+      },
+      {
+        "fromSymbol": "CognitoAuthConfig",
+        "toType": "CognitoIdentityProviderClient",
+        "sourcePath": "src/types/cognito.ts"
+      },
+      {
+        "fromSymbol": "CognitoAuthConfig",
+        "toType": "CognitoJwtVerifier",
+        "sourcePath": "src/types/cognito.ts"
+      },
+      {
+        "fromSymbol": "CognitoAuthConfig",
+        "toType": "CognitoPublicConfig",
+        "sourcePath": "src/types/cognito.ts"
+      },
+      {
+        "fromSymbol": "CognitoAuthConfig",
+        "toType": "CognitoSessionStore",
+        "sourcePath": "src/types/cognito.ts"
+      },
+      {
+        "fromSymbol": "CognitoAuthorizationAttemptStore",
+        "toType": "CognitoAuthorizationAttempt",
+        "sourcePath": "src/types/cognito.ts"
+      },
+      {
+        "fromSymbol": "CognitoPasswordResetCompletionInput",
+        "toType": "AuthIdentifier",
+        "sourcePath": "src/types/cognito.ts"
+      },
+      {
+        "fromSymbol": "CognitoPublicConfig",
+        "toType": "Readonly",
+        "sourcePath": "src/types/cognito.ts"
+      },
+      {
+        "fromSymbol": "CognitoSessionStore",
+        "toType": "AuthSession",
+        "sourcePath": "src/types/cognito.ts"
+      },
+      {
+        "fromSymbol": "CognitoSignUpConfirmationInput",
+        "toType": "AuthIdentifier",
+        "sourcePath": "src/types/cognito.ts"
+      }
+    ],
+    "componentComposition": []
+  }
+}

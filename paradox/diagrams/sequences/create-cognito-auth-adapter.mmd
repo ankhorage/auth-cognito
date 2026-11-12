@@ -1,0 +1,8 @@
+sequenceDiagram
+  participant participant_createCognitoAuthAdapter as createCognitoAuthAdapter
+  participant participant_createCognitoJwtVerifier as createCognitoJwtVerifier
+  participant participant_createCognitoOAuthHandlers as createCognitoOAuthHandlers
+  participant_createCognitoAuthAdapter->>participant_createCognitoJwtVerifier: createCognitoJwtVerifier()
+  participant_createCognitoJwtVerifier-->>participant_createCognitoAuthAdapter: return
+  participant_createCognitoAuthAdapter->>participant_createCognitoOAuthHandlers: createCognitoOAuthHandlers()
+  participant_createCognitoOAuthHandlers-->>participant_createCognitoAuthAdapter: return

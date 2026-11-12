@@ -1,0 +1,43 @@
+graph LR
+  module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts["src/features/auth/adapters/cognito/cognitoAuthFailure.ts"]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts["src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts"]
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts["src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts"]
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts["src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts"]
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts["src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts"]
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts["src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts"]
+  module_src_index_ts["src/index.ts"]
+  module_src_types_cognito_ts["src/types/cognito.ts"]
+  export_CognitoAuthConfig["CognitoAuthConfig"]
+  module_src_types_cognito_ts --> export_CognitoAuthConfig
+  export_CognitoAuthConfig -.-> export_CognitoAuthorizationAttemptStore
+  export_CognitoAuthConfig -.-> export_CognitoJwtVerifier
+  export_CognitoAuthConfig -.-> export_CognitoPublicConfig
+  export_CognitoAuthConfig -.-> export_CognitoSessionStore
+  export_CognitoAuthorizationAttempt["CognitoAuthorizationAttempt"]
+  module_src_types_cognito_ts --> export_CognitoAuthorizationAttempt
+  export_CognitoAuthorizationAttemptStore["CognitoAuthorizationAttemptStore"]
+  module_src_types_cognito_ts --> export_CognitoAuthorizationAttemptStore
+  export_CognitoAuthorizationAttemptStore -.-> export_CognitoAuthorizationAttempt
+  export_CognitoJwtVerifier["CognitoJwtVerifier"]
+  module_src_types_cognito_ts --> export_CognitoJwtVerifier
+  export_CognitoPasswordResetCompletionInput["CognitoPasswordResetCompletionInput"]
+  module_src_types_cognito_ts --> export_CognitoPasswordResetCompletionInput
+  export_CognitoPublicConfig["CognitoPublicConfig"]
+  module_src_types_cognito_ts --> export_CognitoPublicConfig
+  export_CognitoSessionStore["CognitoSessionStore"]
+  module_src_types_cognito_ts --> export_CognitoSessionStore
+  export_CognitoSignUpConfirmationInput["CognitoSignUpConfirmationInput"]
+  module_src_types_cognito_ts --> export_CognitoSignUpConfirmationInput
+  export_CognitoVerifiedClaims["CognitoVerifiedClaims"]
+  module_src_types_cognito_ts --> export_CognitoVerifiedClaims
+  export_confirmCognitoPasswordResetAsync["confirmCognitoPasswordResetAsync"]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --> export_confirmCognitoPasswordResetAsync
+  export_confirmCognitoPasswordResetAsync -.-> export_CognitoAuthConfig
+  export_confirmCognitoPasswordResetAsync -.-> export_CognitoPasswordResetCompletionInput
+  export_confirmCognitoSignUpAsync["confirmCognitoSignUpAsync"]
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --> export_confirmCognitoSignUpAsync
+  export_confirmCognitoSignUpAsync -.-> export_CognitoAuthConfig
+  export_confirmCognitoSignUpAsync -.-> export_CognitoSignUpConfirmationInput
+  export_createCognitoAuthAdapter["createCognitoAuthAdapter"]
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --> export_createCognitoAuthAdapter
+  export_createCognitoAuthAdapter -.-> export_CognitoAuthConfig

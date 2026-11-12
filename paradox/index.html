@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>COGNITO AUTH • Paradox</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f5f7fb;
+        color: #11203b;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      a { color: #2459d3; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      button { font: inherit; }
+      code, pre { font-family: "SFMono-Regular", ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+        min-height: 100vh;
+      }
+      .sidebar {
+        padding: 1.5rem;
+        border-right: 1px solid #d8dfec;
+        background: #ffffff;
+        position: sticky;
+        top: 0;
+        max-height: 100vh;
+        overflow: auto;
+      }
+      .content { padding: 2rem; }
+      .panel, .item {
+        background: #ffffff;
+        border: 1px solid #d8dfec;
+        border-radius: 0.9rem;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 8px 24px rgba(17, 32, 59, 0.06);
+      }
+      .summary {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+      }
+      .summary strong {
+        display: block;
+        font-size: 1.5rem;
+      }
+      .search {
+        width: 100%;
+        padding: 0.75rem 0.9rem;
+        border-radius: 0.75rem;
+        border: 1px solid #c7d2e5;
+        margin: 1rem 0 1.5rem;
+      }
+      .nav-list, .meta-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .nav-list li + li { margin-top: 0.5rem; }
+      .nav-button {
+        width: 100%;
+        display: block;
+        border: 0;
+        border-radius: 0.7rem;
+        background: transparent;
+        color: #24427a;
+        cursor: pointer;
+        padding: 0.55rem 0.7rem;
+        text-align: left;
+      }
+      .nav-button:hover, .nav-button[aria-current="page"] {
+        background: #e8eefb;
+        text-decoration: none;
+      }
+      .nav-button small {
+        display: block;
+        color: #5e6d8c;
+        margin-top: 0.15rem;
+      }
+      .view[hidden] { display: none; }
+      .muted { color: #5e6d8c; }
+      .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0; list-style: none; }
+      .chip {
+        border-radius: 999px;
+        background: #e8eefb;
+        color: #24427a;
+        padding: 0.25rem 0.65rem;
+        font-size: 0.85rem;
+      }
+      table { width: 100%; border-collapse: collapse; margin-top: 0.8rem; }
+      th, td { padding: 0.6rem; border-bottom: 1px solid #e2e7f2; text-align: left; vertical-align: top; }
+      pre {
+        overflow: auto;
+        border-radius: 0.75rem;
+        background: #0f1729;
+        color: #e7edf7;
+        padding: 1rem;
+      }
+      .empty { font-style: italic; color: #6f7f9c; }
+      .mermaid { margin: 1rem 0; overflow: auto; }
+      details > summary { cursor: pointer; color: #5e6d8c; font-size: 0.9rem; margin-top: 0.5rem; user-select: none; }
+      @media (max-width: 900px) {
+        .layout { grid-template-columns: 1fr; }
+        .sidebar { position: static; max-height: none; border-right: 0; border-bottom: 1px solid #d8dfec; }
+        .content { padding: 1rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <p class="muted">Generated with Paradox</p>
+        <h1>COGNITO AUTH</h1>
+        <p>Amazon Cognito User Pools adapter implementing the provider-neutral Ankhorage auth port.</p>
+        <input id="search" class="search" type="search" placeholder="Search current view" />
+        <nav aria-label="Documentation sections">
+          <ul class="nav-list">
+            <li>
+              <button class="nav-button" type="button" data-target="home" aria-current="page">
+                Home
+                <small>Overview, CLI, public API, diagrams</small>
+              </button>
+            </li>
+            <li>
+    <button class="nav-button" type="button" data-target="src/features/auth/adapters/cognito/cognitoAuthFailure.ts">
+      src/features/auth/adapters/cognito/cognitoAuthFailure.ts
+      <small>1 function</small>
+    </button>
+  </li><li>
+    <button class="nav-button" type="button" data-target="src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts">
+      src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts
+      <small>1 function</small>
+    </button>
+  </li><li>
+    <button class="nav-button" type="button" data-target="src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts">
+      src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts
+      <small>1 function</small>
+    </button>
+  </li><li>
+    <button class="nav-button" type="button" data-target="src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts">
+      src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts
+      <small>10 functions</small>
+    </button>
+  </li><li>
+    <button class="nav-button" type="button" data-target="src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts">
+      src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts
+      <small>1 function</small>
+    </button>
+  </li><li>
+    <button class="nav-button" type="button" data-target="src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts">
+      src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts
+      <small>16 functions</small>
+    </button>
+  </li>
+          </ul>
+        </nav>
+      </aside>
+      <main class="content">
+        <section id="view-home" class="view" data-view="home">
+          
+    <section class="panel">
+      <h2>Package overview</h2>
+      <div class="summary">
+        <div><strong>12</strong><span class="muted">public exports</span></div>
+        <div><strong>0</strong><span class="muted">components</span></div>
+        <div><strong>8</strong><span class="muted">modules</span></div>
+        <div><strong>1</strong><span class="muted">entrypoints</span></div>
+      </div>
+      <h3>Entrypoints</h3>
+      <ul class="meta-list">
+        <li><code>src/index.ts</code></li>
+      </ul>
+    </section>
+    
+    <section class="panel"><h2>Policy</h2><p>No documentation findings.</p></section>
+    <section class="panel">
+      <h2>Modules</h2>
+      <article class="item" data-search="src/features/auth/adapters/cognito/cognitoAuthFailure.ts cognitoAuthFailure">
+    <h3>src/features/auth/adapters/cognito/cognitoAuthFailure.ts</h3>
+    <p class="muted">Referenced module</p>
+    <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+    <p><strong>Exports:</strong> <code>cognitoAuthFailure</code></p>
+  </article><article class="item" data-search="src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts src/features/auth/adapters/cognito/cognitoAuthFailure.ts src/types/cognito.ts confirmCognitoPasswordResetAsync">
+    <h3>src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts</h3>
+    <p class="muted">Referenced module</p>
+    <p><strong>Dependencies:</strong> <code>src/features/auth/adapters/cognito/cognitoAuthFailure.ts</code>, <code>src/types/cognito.ts</code></p>
+    <p><strong>Exports:</strong> <code>confirmCognitoPasswordResetAsync</code></p>
+  </article><article class="item" data-search="src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts src/features/auth/adapters/cognito/cognitoAuthFailure.ts src/types/cognito.ts confirmCognitoSignUpAsync">
+    <h3>src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts</h3>
+    <p class="muted">Referenced module</p>
+    <p><strong>Dependencies:</strong> <code>src/features/auth/adapters/cognito/cognitoAuthFailure.ts</code>, <code>src/types/cognito.ts</code></p>
+    <p><strong>Exports:</strong> <code>confirmCognitoSignUpAsync</code></p>
+  </article><article class="item" data-search="src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts src/features/auth/adapters/cognito/cognitoAuthFailure.ts src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts src/types/cognito.ts createCognitoAuthAdapter">
+    <h3>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts</h3>
+    <p class="muted">Referenced module</p>
+    <p><strong>Dependencies:</strong> <code>src/features/auth/adapters/cognito/cognitoAuthFailure.ts</code>, <code>src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts</code>, <code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts</code>, <code>src/types/cognito.ts</code></p>
+    <p><strong>Exports:</strong> <code>createCognitoAuthAdapter</code></p>
+  </article><article class="item" data-search="src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts src/types/cognito.ts createCognitoJwtVerifier">
+    <h3>src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts</h3>
+    <p class="muted">Referenced module</p>
+    <p><strong>Dependencies:</strong> <code>src/types/cognito.ts</code></p>
+    <p><strong>Exports:</strong> <code>createCognitoJwtVerifier</code></p>
+  </article><article class="item" data-search="src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts src/types/cognito.ts createCognitoOAuthHandlers">
+    <h3>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts</h3>
+    <p class="muted">Referenced module</p>
+    <p><strong>Dependencies:</strong> <code>src/types/cognito.ts</code></p>
+    <p><strong>Exports:</strong> <code>createCognitoOAuthHandlers</code></p>
+  </article><article class="item" data-search="src/index.ts CognitoAuthConfig CognitoAuthorizationAttempt CognitoAuthorizationAttemptStore CognitoJwtVerifier CognitoPasswordResetCompletionInput CognitoPublicConfig CognitoSessionStore CognitoSignUpConfirmationInput CognitoVerifiedClaims confirmCognitoPasswordResetAsync confirmCognitoSignUpAsync createCognitoAuthAdapter">
+    <h3>src/index.ts</h3>
+    <p class="muted">Configured entrypoint</p>
+    <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+    <p><strong>Exports:</strong> <code>CognitoAuthConfig</code>, <code>CognitoAuthorizationAttempt</code>, <code>CognitoAuthorizationAttemptStore</code>, <code>CognitoJwtVerifier</code>, <code>CognitoPasswordResetCompletionInput</code>, <code>CognitoPublicConfig</code>, <code>CognitoSessionStore</code>, <code>CognitoSignUpConfirmationInput</code>, <code>CognitoVerifiedClaims</code>, <code>confirmCognitoPasswordResetAsync</code>, <code>confirmCognitoSignUpAsync</code>, <code>createCognitoAuthAdapter</code></p>
+  </article><article class="item" data-search="src/types/cognito.ts CognitoAuthConfig CognitoAuthorizationAttempt CognitoAuthorizationAttemptStore CognitoJwtVerifier CognitoPasswordResetCompletionInput CognitoPublicConfig CognitoSessionStore CognitoSignUpConfirmationInput CognitoVerifiedClaims">
+    <h3>src/types/cognito.ts</h3>
+    <p class="muted">Referenced module</p>
+    <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+    <p><strong>Exports:</strong> <code>CognitoAuthConfig</code>, <code>CognitoAuthorizationAttempt</code>, <code>CognitoAuthorizationAttemptStore</code>, <code>CognitoJwtVerifier</code>, <code>CognitoPasswordResetCompletionInput</code>, <code>CognitoPublicConfig</code>, <code>CognitoSessionStore</code>, <code>CognitoSignUpConfirmationInput</code>, <code>CognitoVerifiedClaims</code></p>
+  </article>
+    </section>
+    <section class="panel">
+      <h2>Public API</h2>
+      
+            <section>
+              <h3>src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts</h3>
+              <article class="item" id="symbol-confirmcognitopasswordresetasync" data-search="confirmCognitoPasswordResetAsync  function src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts Complete Cognito&#39;s password reset with a confirmed code and user-supplied new password. CognitoAuthConfig CognitoPasswordResetCompletionInput (config: CognitoAuthConfig, input: CognitoPasswordResetCompletionInput) =&gt; Promise&lt;AuthResult&gt;">
+    <h4>confirmCognitoPasswordResetAsync</h4>
+    
+    <p class="muted">function • <code>src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts:11:1</code></p>
+    <p>Complete Cognito&#39;s password reset with a confirmed code and user-supplied new password.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">CognitoAuthConfig</li><li class="chip">CognitoPasswordResetCompletionInput</li></ul></div>
+    <div>
+        <h5>Signature</h5>
+        <pre>(config: CognitoAuthConfig, input: CognitoPasswordResetCompletionInput) =&gt; Promise&lt;AuthResult&gt;</pre>
+        <table>
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr>
+                        <td><code>config</code></td>
+                        <td><code>CognitoAuthConfig</code></td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr><tr>
+                        <td><code>input</code></td>
+                        <td><code>CognitoPasswordResetCompletionInput</code></td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr>
+                </tbody>
+              </table>
+        <p><strong>Returns:</strong> <code>Promise&lt;AuthResult&gt;</code></p>
+      </div>
+    
+  </article>
+            </section>
+            <section>
+              <h3>src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts</h3>
+              <article class="item" id="symbol-confirmcognitosignupasync" data-search="confirmCognitoSignUpAsync  function src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts Confirm registration without issuing or pretending to possess a Cognito session. CognitoAuthConfig CognitoSignUpConfirmationInput (config: CognitoAuthConfig, input: CognitoSignUpConfirmationInput) =&gt; Promise&lt;AuthResult&gt;">
+    <h4>confirmCognitoSignUpAsync</h4>
+    
+    <p class="muted">function • <code>src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts:11:1</code></p>
+    <p>Confirm registration without issuing or pretending to possess a Cognito session.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">CognitoAuthConfig</li><li class="chip">CognitoSignUpConfirmationInput</li></ul></div>
+    <div>
+        <h5>Signature</h5>
+        <pre>(config: CognitoAuthConfig, input: CognitoSignUpConfirmationInput) =&gt; Promise&lt;AuthResult&gt;</pre>
+        <table>
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr>
+                        <td><code>config</code></td>
+                        <td><code>CognitoAuthConfig</code></td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr><tr>
+                        <td><code>input</code></td>
+                        <td><code>CognitoSignUpConfirmationInput</code></td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr>
+                </tbody>
+              </table>
+        <p><strong>Returns:</strong> <code>Promise&lt;AuthResult&gt;</code></p>
+      </div>
+    
+  </article>
+            </section>
+            <section>
+              <h3>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts</h3>
+              <article class="item" id="symbol-createcognitoauthadapter" data-search="createCognitoAuthAdapter  function src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Implement the portable AuthPort through a host-owned AWS Cognito User Pool client. CognitoAuthConfig (config: CognitoAuthConfig) =&gt; AuthPort">
+    <h4>createCognitoAuthAdapter</h4>
+    
+    <p class="muted">function • <code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:27:1</code></p>
+    <p>Implement the portable AuthPort through a host-owned AWS Cognito User Pool client.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">CognitoAuthConfig</li></ul></div>
+    <div>
+        <h5>Signature</h5>
+        <pre>(config: CognitoAuthConfig) =&gt; AuthPort</pre>
+        <table>
+                <thead><tr><th>Parameter</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr>
+                        <td><code>config</code></td>
+                        <td><code>CognitoAuthConfig</code></td>
+                        <td>yes</td>
+                        <td></td>
+                      </tr>
+                </tbody>
+              </table>
+        <p><strong>Returns:</strong> <code>AuthPort</code></p>
+      </div>
+    
+  </article>
+            </section>
+            <section>
+              <h3>src/types/cognito.ts</h3>
+              <article class="item" id="symbol-cognitoauthconfig" data-search="CognitoAuthConfig  type src/types/cognito.ts Server/host-owned adapter dependencies; credentials remain within the SDK client. CognitoAuthorizationAttemptStore CognitoJwtVerifier CognitoPublicConfig CognitoSessionStore">
+    <h4>CognitoAuthConfig</h4>
+    
+    <p class="muted">type • <code>src/types/cognito.ts:51:1</code></p>
+    <p>Server/host-owned adapter dependencies; credentials remain within the SDK client.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">CognitoAuthorizationAttemptStore</li><li class="chip">CognitoJwtVerifier</li><li class="chip">CognitoPublicConfig</li><li class="chip">CognitoSessionStore</li></ul></div>
+    
+    <table>
+    <thead><tr><th>Member</th><th>Kind</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+            <td><code>authorizationAttempts</code></td>
+            <td>property</td>
+            <td><code>CognitoAuthorizationAttemptStore</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>authorizationAttemptTtlMs</code></td>
+            <td>property</td>
+            <td><code>number | undefined</code></td>
+            <td>no</td>
+            <td></td>
+          </tr><tr>
+            <td><code>client</code></td>
+            <td>property</td>
+            <td><code>CognitoIdentityProviderClient</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>createAttemptId</code></td>
+            <td>property</td>
+            <td><code>(() =&gt; string) | undefined</code></td>
+            <td>no</td>
+            <td></td>
+          </tr><tr>
+            <td><code>http</code></td>
+            <td>property</td>
+            <td><code>typeof fetch | undefined</code></td>
+            <td>no</td>
+            <td></td>
+          </tr><tr>
+            <td><code>now</code></td>
+            <td>property</td>
+            <td><code>(() =&gt; number) | undefined</code></td>
+            <td>no</td>
+            <td></td>
+          </tr><tr>
+            <td><code>public</code></td>
+            <td>property</td>
+            <td><code>CognitoPublicConfig</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>sessions</code></td>
+            <td>property</td>
+            <td><code>CognitoSessionStore</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>verifyJwt</code></td>
+            <td>property</td>
+            <td><code>CognitoJwtVerifier | undefined</code></td>
+            <td>no</td>
+            <td></td>
+          </tr>
+    </tbody>
+  </table>
+  </article><article class="item" id="symbol-cognitoauthorizationattempt" data-search="CognitoAuthorizationAttempt  type src/types/cognito.ts Persist an OAuth PKCE authorization attempt with atomic one-time consumption.">
+    <h4>CognitoAuthorizationAttempt</h4>
+    
+    <p class="muted">type • <code>src/types/cognito.ts:23:1</code></p>
+    <p>Persist an OAuth PKCE authorization attempt with atomic one-time consumption.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+    
+    <table>
+    <thead><tr><th>Member</th><th>Kind</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+            <td><code>attemptId</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>codeVerifier</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>expiresAt</code></td>
+            <td>property</td>
+            <td><code>number</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>nonce</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>provider</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>redirectUri</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>state</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr>
+    </tbody>
+  </table>
+  </article><article class="item" id="symbol-cognitoauthorizationattemptstore" data-search="CognitoAuthorizationAttemptStore  type src/types/cognito.ts  CognitoAuthorizationAttempt">
+    <h4>CognitoAuthorizationAttemptStore</h4>
+    
+    <p class="muted">type • <code>src/types/cognito.ts:33:1</code></p>
+    
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <ul class="chips"><li class="chip">CognitoAuthorizationAttempt</li></ul></div>
+    
+    <table>
+    <thead><tr><th>Member</th><th>Kind</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+            <td><code>consume</code></td>
+            <td>method</td>
+            <td><code>(attemptId: string, now: number) =&gt; Promise&lt;CognitoAuthorizationAttempt | null&gt;</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>create</code></td>
+            <td>method</td>
+            <td><code>(attempt: CognitoAuthorizationAttempt) =&gt; Promise&lt;void&gt;</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr>
+    </tbody>
+  </table>
+  </article><article class="item" id="symbol-cognitojwtverifier" data-search="CognitoJwtVerifier  unknown src/types/cognito.ts Verify JWTs against this User Pool, app client, expiry, signature, and token use.">
+    <h4>CognitoJwtVerifier</h4>
+    
+    <p class="muted">unknown • <code>src/types/cognito.ts:45:1</code></p>
+    <p>Verify JWTs against this User Pool, app client, expiry, signature, and token use.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+    
+    
+  </article><article class="item" id="symbol-cognitopasswordresetcompletioninput" data-search="CognitoPasswordResetCompletionInput  type src/types/cognito.ts Complete a previously requested password reset with the received confirmation code.">
+    <h4>CognitoPasswordResetCompletionInput</h4>
+    
+    <p class="muted">type • <code>src/types/cognito.ts:70:1</code></p>
+    <p>Complete a previously requested password reset with the received confirmation code.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+    
+    <table>
+    <thead><tr><th>Member</th><th>Kind</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+            <td><code>code</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>identifier</code></td>
+            <td>property</td>
+            <td><code>AuthIdentifier</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>newPassword</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr>
+    </tbody>
+  </table>
+  </article><article class="item" id="symbol-cognitopublicconfig" data-search="CognitoPublicConfig  type src/types/cognito.ts Public User Pool configuration; no AWS credentials or client secrets.">
+    <h4>CognitoPublicConfig</h4>
+    
+    <p class="muted">type • <code>src/types/cognito.ts:5:1</code></p>
+    <p>Public User Pool configuration; no AWS credentials or client secrets.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+    
+    <table>
+    <thead><tr><th>Member</th><th>Kind</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+            <td><code>clientId</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>hostedDomain</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>oauthProviders</code></td>
+            <td>property</td>
+            <td><code>Readonly&lt;Record&lt;string, string&gt;&gt; | undefined</code></td>
+            <td>no</td>
+            <td></td>
+          </tr><tr>
+            <td><code>redirectUris</code></td>
+            <td>property</td>
+            <td><code>readonly string[]</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>region</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>scopes</code></td>
+            <td>property</td>
+            <td><code>readonly string[] | undefined</code></td>
+            <td>no</td>
+            <td></td>
+          </tr><tr>
+            <td><code>userPoolId</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr>
+    </tbody>
+  </table>
+  </article><article class="item" id="symbol-cognitosessionstore" data-search="CognitoSessionStore  type src/types/cognito.ts Persist browser or native session tokens in a host-owned secure store.">
+    <h4>CognitoSessionStore</h4>
+    
+    <p class="muted">type • <code>src/types/cognito.ts:16:1</code></p>
+    <p>Persist browser or native session tokens in a host-owned secure store.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+    
+    <table>
+    <thead><tr><th>Member</th><th>Kind</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+            <td><code>clear</code></td>
+            <td>method</td>
+            <td><code>() =&gt; Promise&lt;void&gt;</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>read</code></td>
+            <td>method</td>
+            <td><code>() =&gt; Promise&lt;AuthSession | null&gt;</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>write</code></td>
+            <td>method</td>
+            <td><code>(session: AuthSession) =&gt; Promise&lt;void&gt;</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr>
+    </tbody>
+  </table>
+  </article><article class="item" id="symbol-cognitosignupconfirmationinput" data-search="CognitoSignUpConfirmationInput  type src/types/cognito.ts Confirm registration without claiming Cognito has issued a signed session.">
+    <h4>CognitoSignUpConfirmationInput</h4>
+    
+    <p class="muted">type • <code>src/types/cognito.ts:64:1</code></p>
+    <p>Confirm registration without claiming Cognito has issued a signed session.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+    
+    <table>
+    <thead><tr><th>Member</th><th>Kind</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+            <td><code>code</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr><tr>
+            <td><code>identifier</code></td>
+            <td>property</td>
+            <td><code>AuthIdentifier</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr>
+    </tbody>
+  </table>
+  </article><article class="item" id="symbol-cognitoverifiedclaims" data-search="CognitoVerifiedClaims  type src/types/cognito.ts Verified claims contain the stable Cognito sub identifier.">
+    <h4>CognitoVerifiedClaims</h4>
+    
+    <p class="muted">type • <code>src/types/cognito.ts:39:1</code></p>
+    <p>Verified claims contain the stable Cognito sub identifier.</p>
+    
+    <p><strong>Export paths:</strong> <code>src/index.ts</code></p>
+    <div><strong>Related symbols:</strong> <span class="empty">None</span></div>
+    
+    <table>
+    <thead><tr><th>Member</th><th>Kind</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+            <td><code>nonce</code></td>
+            <td>property</td>
+            <td><code>string | undefined</code></td>
+            <td>no</td>
+            <td></td>
+          </tr><tr>
+            <td><code>sub</code></td>
+            <td>property</td>
+            <td><code>string</code></td>
+            <td>yes</td>
+            <td></td>
+          </tr>
+    </tbody>
+  </table>
+  </article>
+            </section>
+    </section>
+    <section class="panel">
+      <h2>Component registry</h2>
+      <p class="empty">No components were detected.</p>
+    </section>
+    <section class="panel">
+      <h2>Diagrams</h2>
+      <article class="item" data-search="Architecture overview diagrams/architecture-overview.mmd">
+    <h3>Architecture overview</h3>
+    <p class="muted"><code>diagrams/architecture-overview.mmd</code></p>
+    <div class="mermaid">graph TD
+  package__ankhorage_auth_cognito[&quot;COGNITO AUTH&quot;]
+  entrypoint_src_index_ts[&quot;src/index.ts&quot;]
+  package__ankhorage_auth_cognito --&gt; entrypoint_src_index_ts
+  module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts[&quot;src/features/auth/adapters/cognito/cognitoAuthFailure.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts[&quot;src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts[&quot;src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts[&quot;src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts --&gt; module_src_types_cognito_ts
+  module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_types_cognito_ts[&quot;src/types/cognito.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_types_cognito_ts
+</div>
+    <details>
+      <summary>View Mermaid source</summary>
+      <pre>graph TD
+  package__ankhorage_auth_cognito[&quot;COGNITO AUTH&quot;]
+  entrypoint_src_index_ts[&quot;src/index.ts&quot;]
+  package__ankhorage_auth_cognito --&gt; entrypoint_src_index_ts
+  module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts[&quot;src/features/auth/adapters/cognito/cognitoAuthFailure.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts[&quot;src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts[&quot;src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts[&quot;src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts --&gt; module_src_types_cognito_ts
+  module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_types_cognito_ts[&quot;src/types/cognito.ts&quot;]
+  package__ankhorage_auth_cognito -.-&gt; module_src_types_cognito_ts
+</pre>
+    </details>
+  </article><article class="item" data-search="Module relationships diagrams/module-relationships.mmd">
+    <h3>Module relationships</h3>
+    <p class="muted"><code>diagrams/module-relationships.mmd</code></p>
+    <div class="mermaid">graph LR
+  module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts[&quot;src/features/auth/adapters/cognito/cognitoAuthFailure.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts[&quot;src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts[&quot;src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts[&quot;src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts&quot;]
+  module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_types_cognito_ts[&quot;src/types/cognito.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts --&gt; module_src_types_cognito_ts
+</div>
+    <details>
+      <summary>View Mermaid source</summary>
+      <pre>graph LR
+  module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts[&quot;src/features/auth/adapters/cognito/cognitoAuthFailure.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts[&quot;src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts[&quot;src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts[&quot;src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts&quot;]
+  module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_types_cognito_ts[&quot;src/types/cognito.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts --&gt; module_src_types_cognito_ts
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts --&gt; module_src_types_cognito_ts
+</pre>
+    </details>
+  </article><article class="item" data-search="Export graph diagrams/export-graph.mmd">
+    <h3>Export graph</h3>
+    <p class="muted"><code>diagrams/export-graph.mmd</code></p>
+    <div class="mermaid">graph LR
+  module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts[&quot;src/features/auth/adapters/cognito/cognitoAuthFailure.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts[&quot;src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts[&quot;src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts[&quot;src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts&quot;]
+  module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_types_cognito_ts[&quot;src/types/cognito.ts&quot;]
+  export_CognitoAuthConfig[&quot;CognitoAuthConfig&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoAuthConfig
+  export_CognitoAuthConfig -.-&gt; export_CognitoAuthorizationAttemptStore
+  export_CognitoAuthConfig -.-&gt; export_CognitoJwtVerifier
+  export_CognitoAuthConfig -.-&gt; export_CognitoPublicConfig
+  export_CognitoAuthConfig -.-&gt; export_CognitoSessionStore
+  export_CognitoAuthorizationAttempt[&quot;CognitoAuthorizationAttempt&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoAuthorizationAttempt
+  export_CognitoAuthorizationAttemptStore[&quot;CognitoAuthorizationAttemptStore&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoAuthorizationAttemptStore
+  export_CognitoAuthorizationAttemptStore -.-&gt; export_CognitoAuthorizationAttempt
+  export_CognitoJwtVerifier[&quot;CognitoJwtVerifier&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoJwtVerifier
+  export_CognitoPasswordResetCompletionInput[&quot;CognitoPasswordResetCompletionInput&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoPasswordResetCompletionInput
+  export_CognitoPublicConfig[&quot;CognitoPublicConfig&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoPublicConfig
+  export_CognitoSessionStore[&quot;CognitoSessionStore&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoSessionStore
+  export_CognitoSignUpConfirmationInput[&quot;CognitoSignUpConfirmationInput&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoSignUpConfirmationInput
+  export_CognitoVerifiedClaims[&quot;CognitoVerifiedClaims&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoVerifiedClaims
+  export_confirmCognitoPasswordResetAsync[&quot;confirmCognitoPasswordResetAsync&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; export_confirmCognitoPasswordResetAsync
+  export_confirmCognitoPasswordResetAsync -.-&gt; export_CognitoAuthConfig
+  export_confirmCognitoPasswordResetAsync -.-&gt; export_CognitoPasswordResetCompletionInput
+  export_confirmCognitoSignUpAsync[&quot;confirmCognitoSignUpAsync&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; export_confirmCognitoSignUpAsync
+  export_confirmCognitoSignUpAsync -.-&gt; export_CognitoAuthConfig
+  export_confirmCognitoSignUpAsync -.-&gt; export_CognitoSignUpConfirmationInput
+  export_createCognitoAuthAdapter[&quot;createCognitoAuthAdapter&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; export_createCognitoAuthAdapter
+  export_createCognitoAuthAdapter -.-&gt; export_CognitoAuthConfig
+</div>
+    <details>
+      <summary>View Mermaid source</summary>
+      <pre>graph LR
+  module_src_features_auth_adapters_cognito_cognitoAuthFailure_ts[&quot;src/features/auth/adapters/cognito/cognitoAuthFailure.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts[&quot;src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts[&quot;src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoJwtVerifier_ts[&quot;src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoOAuthHandlers_ts[&quot;src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts&quot;]
+  module_src_index_ts[&quot;src/index.ts&quot;]
+  module_src_types_cognito_ts[&quot;src/types/cognito.ts&quot;]
+  export_CognitoAuthConfig[&quot;CognitoAuthConfig&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoAuthConfig
+  export_CognitoAuthConfig -.-&gt; export_CognitoAuthorizationAttemptStore
+  export_CognitoAuthConfig -.-&gt; export_CognitoJwtVerifier
+  export_CognitoAuthConfig -.-&gt; export_CognitoPublicConfig
+  export_CognitoAuthConfig -.-&gt; export_CognitoSessionStore
+  export_CognitoAuthorizationAttempt[&quot;CognitoAuthorizationAttempt&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoAuthorizationAttempt
+  export_CognitoAuthorizationAttemptStore[&quot;CognitoAuthorizationAttemptStore&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoAuthorizationAttemptStore
+  export_CognitoAuthorizationAttemptStore -.-&gt; export_CognitoAuthorizationAttempt
+  export_CognitoJwtVerifier[&quot;CognitoJwtVerifier&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoJwtVerifier
+  export_CognitoPasswordResetCompletionInput[&quot;CognitoPasswordResetCompletionInput&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoPasswordResetCompletionInput
+  export_CognitoPublicConfig[&quot;CognitoPublicConfig&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoPublicConfig
+  export_CognitoSessionStore[&quot;CognitoSessionStore&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoSessionStore
+  export_CognitoSignUpConfirmationInput[&quot;CognitoSignUpConfirmationInput&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoSignUpConfirmationInput
+  export_CognitoVerifiedClaims[&quot;CognitoVerifiedClaims&quot;]
+  module_src_types_cognito_ts --&gt; export_CognitoVerifiedClaims
+  export_confirmCognitoPasswordResetAsync[&quot;confirmCognitoPasswordResetAsync&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoPasswordResetAsync_ts --&gt; export_confirmCognitoPasswordResetAsync
+  export_confirmCognitoPasswordResetAsync -.-&gt; export_CognitoAuthConfig
+  export_confirmCognitoPasswordResetAsync -.-&gt; export_CognitoPasswordResetCompletionInput
+  export_confirmCognitoSignUpAsync[&quot;confirmCognitoSignUpAsync&quot;]
+  module_src_features_auth_adapters_cognito_confirmCognitoSignUpAsync_ts --&gt; export_confirmCognitoSignUpAsync
+  export_confirmCognitoSignUpAsync -.-&gt; export_CognitoAuthConfig
+  export_confirmCognitoSignUpAsync -.-&gt; export_CognitoSignUpConfirmationInput
+  export_createCognitoAuthAdapter[&quot;createCognitoAuthAdapter&quot;]
+  module_src_features_auth_adapters_cognito_createCognitoAuthAdapter_ts --&gt; export_createCognitoAuthAdapter
+  export_createCognitoAuthAdapter -.-&gt; export_CognitoAuthConfig
+</pre>
+    </details>
+  </article><article class="item" data-search="confirmCognitoPasswordResetAsync sequence diagrams/sequences/confirm-cognito-password-reset-async.mmd">
+    <h3>confirmCognitoPasswordResetAsync sequence</h3>
+    <p class="muted"><code>diagrams/sequences/confirm-cognito-password-reset-async.mmd</code></p>
+    <div class="mermaid">sequenceDiagram
+  participant participant_cognitoAuthFailure as cognitoAuthFailure
+  participant participant_confirmCognitoPasswordResetAsync as confirmCognitoPasswordResetAsync
+  participant_confirmCognitoPasswordResetAsync-&gt;&gt;participant_cognitoAuthFailure: cognitoAuthFailure()
+  participant_cognitoAuthFailure--&gt;&gt;participant_confirmCognitoPasswordResetAsync: return
+</div>
+    <details>
+      <summary>View Mermaid source</summary>
+      <pre>sequenceDiagram
+  participant participant_cognitoAuthFailure as cognitoAuthFailure
+  participant participant_confirmCognitoPasswordResetAsync as confirmCognitoPasswordResetAsync
+  participant_confirmCognitoPasswordResetAsync-&gt;&gt;participant_cognitoAuthFailure: cognitoAuthFailure()
+  participant_cognitoAuthFailure--&gt;&gt;participant_confirmCognitoPasswordResetAsync: return
+</pre>
+    </details>
+  </article><article class="item" data-search="confirmCognitoSignUpAsync sequence diagrams/sequences/confirm-cognito-sign-up-async.mmd">
+    <h3>confirmCognitoSignUpAsync sequence</h3>
+    <p class="muted"><code>diagrams/sequences/confirm-cognito-sign-up-async.mmd</code></p>
+    <div class="mermaid">sequenceDiagram
+  participant participant_cognitoAuthFailure as cognitoAuthFailure
+  participant participant_confirmCognitoSignUpAsync as confirmCognitoSignUpAsync
+  participant_confirmCognitoSignUpAsync-&gt;&gt;participant_cognitoAuthFailure: cognitoAuthFailure()
+  participant_cognitoAuthFailure--&gt;&gt;participant_confirmCognitoSignUpAsync: return
+</div>
+    <details>
+      <summary>View Mermaid source</summary>
+      <pre>sequenceDiagram
+  participant participant_cognitoAuthFailure as cognitoAuthFailure
+  participant participant_confirmCognitoSignUpAsync as confirmCognitoSignUpAsync
+  participant_confirmCognitoSignUpAsync-&gt;&gt;participant_cognitoAuthFailure: cognitoAuthFailure()
+  participant_cognitoAuthFailure--&gt;&gt;participant_confirmCognitoSignUpAsync: return
+</pre>
+    </details>
+  </article><article class="item" data-search="createCognitoAuthAdapter sequence diagrams/sequences/create-cognito-auth-adapter.mmd">
+    <h3>createCognitoAuthAdapter sequence</h3>
+    <p class="muted"><code>diagrams/sequences/create-cognito-auth-adapter.mmd</code></p>
+    <div class="mermaid">sequenceDiagram
+  participant participant_createCognitoAuthAdapter as createCognitoAuthAdapter
+  participant participant_createCognitoJwtVerifier as createCognitoJwtVerifier
+  participant participant_createCognitoOAuthHandlers as createCognitoOAuthHandlers
+  participant_createCognitoAuthAdapter-&gt;&gt;participant_createCognitoJwtVerifier: createCognitoJwtVerifier()
+  participant_createCognitoJwtVerifier--&gt;&gt;participant_createCognitoAuthAdapter: return
+  participant_createCognitoAuthAdapter-&gt;&gt;participant_createCognitoOAuthHandlers: createCognitoOAuthHandlers()
+  participant_createCognitoOAuthHandlers--&gt;&gt;participant_createCognitoAuthAdapter: return
+</div>
+    <details>
+      <summary>View Mermaid source</summary>
+      <pre>sequenceDiagram
+  participant participant_createCognitoAuthAdapter as createCognitoAuthAdapter
+  participant participant_createCognitoJwtVerifier as createCognitoJwtVerifier
+  participant participant_createCognitoOAuthHandlers as createCognitoOAuthHandlers
+  participant_createCognitoAuthAdapter-&gt;&gt;participant_createCognitoJwtVerifier: createCognitoJwtVerifier()
+  participant_createCognitoJwtVerifier--&gt;&gt;participant_createCognitoAuthAdapter: return
+  participant_createCognitoAuthAdapter-&gt;&gt;participant_createCognitoOAuthHandlers: createCognitoOAuthHandlers()
+  participant_createCognitoOAuthHandlers--&gt;&gt;participant_createCognitoAuthAdapter: return
+</pre>
+    </details>
+  </article>
+    </section>
+        </section>
+        <section id="view-src-features-auth-adapters-cognito-cognitoauthfailure-ts" class="view" data-view="src/features/auth/adapters/cognito/cognitoAuthFailure.ts" hidden>
+    <section class="panel">
+      <h2>src/features/auth/adapters/cognito/cognitoAuthFailure.ts</h2>
+      <article class="item" data-search="cognitoAuthFailure src/features/auth/adapters/cognito/cognitoAuthFailure.ts Normalize Cognito failures without leaking tokens, provider messages or credentials.">
+    <h3>cognitoAuthFailure</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/cognitoAuthFailure.ts:4:1</code></p>
+    <p>Normalize Cognito failures without leaking tokens, provider messages or credentials.</p>
+    
+  </article>
+    </section>
+  </section><section id="view-src-features-auth-adapters-cognito-confirmcognitopasswordresetasync-ts" class="view" data-view="src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts" hidden>
+    <section class="panel">
+      <h2>src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts</h2>
+      <article class="item" data-search="confirmCognitoPasswordResetAsync src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts Complete Cognito&#39;s password reset with a confirmed code and user-supplied new password.">
+    <h3>confirmCognitoPasswordResetAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/confirmCognitoPasswordResetAsync.ts:11:1</code></p>
+    <p>Complete Cognito&#39;s password reset with a confirmed code and user-supplied new password.</p>
+    
+  </article>
+    </section>
+  </section><section id="view-src-features-auth-adapters-cognito-confirmcognitosignupasync-ts" class="view" data-view="src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts" hidden>
+    <section class="panel">
+      <h2>src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts</h2>
+      <article class="item" data-search="confirmCognitoSignUpAsync src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts Confirm registration without issuing or pretending to possess a Cognito session.">
+    <h3>confirmCognitoSignUpAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/confirmCognitoSignUpAsync.ts:11:1</code></p>
+    <p>Confirm registration without issuing or pretending to possess a Cognito session.</p>
+    
+  </article>
+    </section>
+  </section><section id="view-src-features-auth-adapters-cognito-createcognitoauthadapter-ts" class="view" data-view="src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts" hidden>
+    <section class="panel">
+      <h2>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts</h2>
+      <article class="item" data-search="createCognitoAuthAdapter src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Implement the portable AuthPort through a host-owned AWS Cognito User Pool client.">
+    <h3>createCognitoAuthAdapter</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:27:1</code></p>
+    <p>Implement the portable AuthPort through a host-owned AWS Cognito User Pool client.</p>
+    
+  </article><article class="item" data-search="signInAsync src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Sign in through a supported Cognito password flow and verify its actual JWT.">
+    <h3>signInAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:48:1</code></p>
+    <p>Sign in through a supported Cognito password flow and verify its actual JWT.</p>
+    
+  </article><article class="item" data-search="signUpAsync src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Return a Cognito user after signup without fabricating a session for an unconfirmed account.">
+    <h3>signUpAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:76:1</code></p>
+    <p>Return a Cognito user after signup without fabricating a session for an unconfirmed account.</p>
+    
+  </article><article class="item" data-search="identifierAttributes src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Translate the supported Cognito username attributes into their real provider names.">
+    <h3>identifierAttributes</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:106:1</code></p>
+    <p>Translate the supported Cognito username attributes into their real provider names.</p>
+    
+  </article><article class="item" data-search="signOutAsync src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Revoke the current token or globally sign out, retaining the host&#39;s storage boundary.">
+    <h3>signOutAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:117:1</code></p>
+    <p>Revoke the current token or globally sign out, retaining the host&#39;s storage boundary.</p>
+    
+  </article><article class="item" data-search="getSessionAsync src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Validate any host-persisted user identity against the signed Cognito subject.">
+    <h3>getSessionAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:137:1</code></p>
+    <p>Validate any host-persisted user identity against the signed Cognito subject.</p>
+    
+  </article><article class="item" data-search="refreshSessionAsync src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Refresh Cognito tokens using the rotation-safe token exchange API.">
+    <h3>refreshSessionAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:154:1</code></p>
+    <p>Refresh Cognito tokens using the rotation-safe token exchange API.</p>
+    
+  </article><article class="item" data-search="requestPasswordResetAsync src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Initiate the provider&#39;s reset flow without exposing provider exception payloads.">
+    <h3>requestPasswordResetAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:183:1</code></p>
+    <p>Initiate the provider&#39;s reset flow without exposing provider exception payloads.</p>
+    
+  </article><article class="item" data-search="resolveVerifiedSession src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Validate the Cognito access JWT and derive the stable subject, never an email as identity.">
+    <h3>resolveVerifiedSession</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:201:1</code></p>
+    <p>Validate the Cognito access JWT and derive the stable subject, never an email as identity.</p>
+    
+  </article><article class="item" data-search="now src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts Centralize time in milliseconds for session and OAuth expiration.">
+    <h3>now</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoAuthAdapter.ts:224:1</code></p>
+    <p>Centralize time in milliseconds for session and OAuth expiration.</p>
+    
+  </article>
+    </section>
+  </section><section id="view-src-features-auth-adapters-cognito-createcognitojwtverifier-ts" class="view" data-view="src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts" hidden>
+    <section class="panel">
+      <h2>src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts</h2>
+      <article class="item" data-search="createCognitoJwtVerifier src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts Verify access and ID JWTs with the configured User Pool and Cognito app client.">
+    <h3>createCognitoJwtVerifier</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoJwtVerifier.ts:6:1</code></p>
+    <p>Verify access and ID JWTs with the configured User Pool and Cognito app client.</p>
+    
+  </article>
+    </section>
+  </section><section id="view-src-features-auth-adapters-cognito-createcognitooauthhandlers-ts" class="view" data-view="src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts" hidden>
+    <section class="panel">
+      <h2>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts</h2>
+      <article class="item" data-search="createCognitoOAuthHandlers src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Provide single-use PKCE OAuth operations through Cognito&#39;s HTTPS authorization server.">
+    <h3>createCognitoOAuthHandlers</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:30:1</code></p>
+    <p>Provide single-use PKCE OAuth operations through Cognito&#39;s HTTPS authorization server.</p>
+    
+  </article><article class="item" data-search="startAuthorizationAsync src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Persist an authorization-code challenge before exposing the outbound redirect.">
+    <h3>startAuthorizationAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:42:1</code></p>
+    <p>Persist an authorization-code challenge before exposing the outbound redirect.</p>
+    
+  </article><article class="item" data-search="buildAuthorizationUrlAsync src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Construct a registered Cognito authorize URL with S256 PKCE, state and nonce.">
+    <h3>buildAuthorizationUrlAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:91:1</code></p>
+    <p>Construct a registered Cognito authorize URL with S256 PKCE, state and nonce.</p>
+    
+  </article><article class="item" data-search="completeAuthorizationAsync src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Consume one callback attempt and reject expired, replayed, or mismatched authorization.">
+    <h3>completeAuthorizationAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:120:1</code></p>
+    <p>Consume one callback attempt and reject expired, replayed, or mismatched authorization.</p>
+    
+  </article><article class="item" data-search="exchangeAuthorizationCodeAsync src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Redeem the one-time code and retain only validated Cognito sessions.">
+    <h3>exchangeAuthorizationCodeAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:157:1</code></p>
+    <p>Redeem the one-time code and retain only validated Cognito sessions.</p>
+    
+  </article><article class="item" data-search="verifiedOAuthSessionAsync src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Require matching signed access/ID subjects and the exact originating OAuth nonce.">
+    <h3>verifiedOAuthSessionAsync</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:189:1</code></p>
+    <p>Require matching signed access/ID subjects and the exact originating OAuth nonce.</p>
+    
+  </article><article class="item" data-search="authorizationDomain src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Restrict Cognito authorization to a configured HTTPS endpoint.">
+    <h3>authorizationDomain</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:215:1</code></p>
+    <p>Restrict Cognito authorization to a configured HTTPS endpoint.</p>
+    
+  </article><article class="item" data-search="resolveProvider src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Never accept an unconfigured federated identity provider or arbitrary identity_provider.">
+    <h3>resolveProvider</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:232:1</code></p>
+    <p>Never accept an unconfigured federated identity provider or arbitrary identity_provider.</p>
+    
+  </article><article class="item" data-search="randomToken src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Generate a cryptographically random base64url PKCE verifier, state, or nonce.">
+    <h3>randomToken</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:241:1</code></p>
+    <p>Generate a cryptographically random base64url PKCE verifier, state, or nonce.</p>
+    
+  </article><article class="item" data-search="pkceChallenge src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Bind the authorization code to its originating client with an S256 challenge.">
+    <h3>pkceChallenge</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:250:1</code></p>
+    <p>Bind the authorization code to its originating client with an S256 challenge.</p>
+    
+  </article><article class="item" data-search="parseCallback src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Validate callback location and reject duplicate or missing OAuth parameters.">
+    <h3>parseCallback</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:261:1</code></p>
+    <p>Validate callback location and reject duplicate or missing OAuth parameters.</p>
+    
+  </article><article class="item" data-search="isTokenResponse src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Decode the untrusted token response without accepting incomplete or malformed sessions.">
+    <h3>isTokenResponse</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:281:1</code></p>
+    <p>Decode the untrusted token response without accepting incomplete or malformed sessions.</p>
+    
+  </article><article class="item" data-search="startFailure src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Produce an OAuth start error with no callback, code, or token details.">
+    <h3>startFailure</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:301:1</code></p>
+    <p>Produce an OAuth start error with no callback, code, or token details.</p>
+    
+  </article><article class="item" data-search="completeFailure src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Produce an OAuth completion error with no sensitive provider payload.">
+    <h3>completeFailure</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:306:1</code></p>
+    <p>Produce an OAuth completion error with no sensitive provider payload.</p>
+    
+  </article><article class="item" data-search="oauthError src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Normalize Cognito OAuth errors using released portable Auth contracts.">
+    <h3>oauthError</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:315:1</code></p>
+    <p>Normalize Cognito OAuth errors using released portable Auth contracts.</p>
+    
+  </article><article class="item" data-search="now src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts Resolve the injected deterministic clock for durable OAuth attempt expiration.">
+    <h3>now</h3>
+    <p class="muted"><code>src/features/auth/adapters/cognito/createCognitoOAuthHandlers.ts:330:1</code></p>
+    <p>Resolve the injected deterministic clock for durable OAuth attempt expiration.</p>
+    
+  </article>
+    </section>
+  </section>
+      </main>
+    </div>
+    <script>
+      const search = document.getElementById('search');
+      const navButtons = Array.from(document.querySelectorAll('[data-target]'));
+      const views = Array.from(document.querySelectorAll('[data-view]'));
+
+      function getActiveView() {
+        return document.querySelector('[data-view]:not([hidden])');
+      }
+
+      function applySearch() {
+        const value = search?.value.trim().toLowerCase() || '';
+        const activeView = getActiveView();
+        const items = Array.from(activeView?.querySelectorAll('[data-search]') || []);
+
+        for (const item of items) {
+          const haystack = (item.getAttribute('data-search') || '').toLowerCase();
+          item.style.display = value === '' || haystack.includes(value) ? '' : 'none';
+        }
+      }
+
+      for (const button of navButtons) {
+        button.addEventListener('click', () => {
+          const target = button.getAttribute('data-target');
+
+          for (const view of views) {
+            view.hidden = view.getAttribute('data-view') !== target;
+          }
+
+          for (const item of navButtons) {
+            item.setAttribute('aria-current', item === button ? 'page' : 'false');
+          }
+
+          if (search) search.value = '';
+          applySearch();
+        });
+      }
+
+      search?.addEventListener('input', applySearch);
+    </script>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

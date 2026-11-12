@@ -1,0 +1,5 @@
+sequenceDiagram
+  participant participant_cognitoAuthFailure as cognitoAuthFailure
+  participant participant_confirmCognitoSignUpAsync as confirmCognitoSignUpAsync
+  participant_confirmCognitoSignUpAsync->>participant_cognitoAuthFailure: cognitoAuthFailure()
+  participant_cognitoAuthFailure-->>participant_confirmCognitoSignUpAsync: return
