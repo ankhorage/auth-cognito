@@ -51,6 +51,7 @@
     "format:check": "ankhorage-prettier --check .",
     "prepack": "bun run build",
     "test": "bun test src",
+    "test:packed-consumer": "bun scripts/testPackedConsumer.ts",
     "check-types": "bun x tsc --noEmit -p tsconfig.json",
     "typecheck": "bun run check-types",
     "version-packages": "ankhorage-changeset version",

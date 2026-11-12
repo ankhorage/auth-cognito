@@ -8,7 +8,7 @@ export type {
   CognitoJwtVerifier,
   CognitoPasswordResetCompletionInput,
   CognitoPublicConfig,
-  CognitoSignUpConfirmationInput,
   CognitoSessionStore,
+  CognitoSignUpConfirmationInput,
   CognitoVerifiedClaims,
 } from './types/cognito.js';

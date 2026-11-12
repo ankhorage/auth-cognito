@@ -15,9 +15,14 @@ function base64Url(bytes: Uint8Array): string {
 }
 
 /*** Sign a real RSA JWT with locally generated test keys rather than a fake verifier. */
-async function signJwt(payload: Readonly<Record<string, unknown>>, privateKey: CryptoKey): Promise<string> {
+async function signJwt(
+  payload: Readonly<Record<string, unknown>>,
+  privateKey: CryptoKey,
+): Promise<string> {
   const encoder = new TextEncoder();
-  const header = base64Url(encoder.encode(JSON.stringify({ alg: 'RS256', kid: keyId, typ: 'JWT' })));
+  const header = base64Url(
+    encoder.encode(JSON.stringify({ alg: 'RS256', kid: keyId, typ: 'JWT' })),
+  );
   const body = base64Url(encoder.encode(JSON.stringify(payload)));
   const unsigned = `${header}.${body}`;
   const signature = new Uint8Array(
@@ -42,7 +47,14 @@ async function createSigningKey() {
   if (!exported.n || !exported.e) throw new Error('RSA test key lacks modulus or exponent.');
   return {
     privateKey: pair.privateKey,
-    jwk: { kty: 'RSA' as const, kid: keyId, alg: 'RS256' as const, use: 'sig' as const, n: exported.n, e: exported.e },
+    jwk: {
+      kty: 'RSA' as const,
+      kid: keyId,
+      alg: 'RS256' as const,
+      use: 'sig' as const,
+      n: exported.n,
+      e: exported.e,
+    },
   };
 }
 

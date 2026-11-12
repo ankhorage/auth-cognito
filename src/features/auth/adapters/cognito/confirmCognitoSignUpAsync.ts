@@ -1,7 +1,10 @@
 import type { AuthResult } from '@ankhorage/contracts/auth';
 import { ConfirmSignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
 
-import type { CognitoAuthConfig, CognitoSignUpConfirmationInput } from '../../../../types/cognito.js';
+import type {
+  CognitoAuthConfig,
+  CognitoSignUpConfirmationInput,
+} from '../../../../types/cognito.js';
 import { cognitoAuthFailure } from './cognitoAuthFailure.js';
 
 /*** Confirm registration without issuing or pretending to possess a Cognito session. */
