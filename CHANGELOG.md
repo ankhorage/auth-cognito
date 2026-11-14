@@ -1,5 +1,11 @@
 # @ankhorage/auth-cognito
 
+## 0.1.1
+
+### Patch Changes
+
+- 92fcca7: Add canonical repository metadata for organization discovery and documentation.
+
 ## 0.1.0
 
 ### Minor Changes
