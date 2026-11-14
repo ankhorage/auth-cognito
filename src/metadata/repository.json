@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "kind": "adapter",
+  "title": "Ankhorage Cognito Auth",
+  "summary": "Implements the provider-neutral Ankhorage authentication port with Amazon Cognito User Pools.",
+  "purpose": "Provide a standalone Cognito authentication adapter with explicit host-owned session and authorization-attempt persistence.",
+  "domain": "authentication",
+  "responsibilities": [
+    "Implement password, session, refresh, sign-out, password-reset, and brokered OAuth flows through Cognito User Pools.",
+    "Verify Cognito access and identity JWTs before accepting provider identities or sessions.",
+    "Translate Cognito and AWS failures into provider-neutral authentication results."
+  ],
+  "boundaries": [
+    "Does not own application user profiles or authorization policy.",
+    "Does not persist sessions or authorization attempts; the host supplies those stores.",
+    "Does not expose AWS credentials through its public configuration."
+  ],
+  "audience": [
+    "Applications that use Amazon Cognito User Pools behind the Ankhorage authentication port.",
+    "Hosts that provide secure session and one-time authorization-attempt persistence."
+  ],
+  "useCases": [
+    "Authenticate and register users with Cognito password flows.",
+    "Complete a PKCE authorization flow through a configured Cognito identity provider.",
+    "Read, refresh, and revoke a host-persisted Cognito session."
+  ],
+  "architecture": {
+    "role": "Provider adapter at the Amazon Cognito boundary for the published AuthPort.",
+    "invariants": [
+      "Stable Cognito subject identifiers are derived from verified JWT claims.",
+      "Session and authorization-attempt state remains host-owned and authorization attempts are consumed once.",
+      "Provider failures are normalized without exposing provider payloads or secrets."
+    ]
+  },
+  "implements": [
+    {
+      "packageName": "@ankhorage/auth",
+      "interfaceId": "AuthPort"
+    }
+  ],
+  "constraints": {
+    "configuration": [
+      "Requires a Cognito region, User Pool identifier, app-client identifier, hosted domain, and explicit redirect URI allowlist.",
+      "Requires host-provided session and authorization-attempt stores and an AWS Cognito client."
+    ],
+    "security": [
+      "Cognito JWT signature, issuer, client, token-use, expiry, subject, and OAuth nonce bindings are verified before a session is trusted.",
+      "Authorization uses PKCE and one-time state stored outside the adapter."
+    ],
+    "limitations": [
+      "OTP verification is not represented as a signed Cognito session by the generic AuthPort."
+    ]
+  }
+}
